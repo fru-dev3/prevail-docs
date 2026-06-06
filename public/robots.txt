@@ -1,0 +1,5 @@
+# docs.prevail.sh
+User-agent: *
+Allow: /
+
+Sitemap: https://docs.prevail.sh/sitemap-index.xml
