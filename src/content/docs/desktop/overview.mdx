@@ -7,7 +7,40 @@ sidebar:
 
 import { Steps, Aside } from '@astrojs/starlight/components';
 
+<figure class="pv-mark">
+  <img src="/img/prevail-mark.png" alt="Prevail app icon" />
+</figure>
+
 **Prevail Desktop** is the native macOS companion to the CLI — the same vault, the same council, the same canonical benchmark, with a graphical interface and no terminal required. It's built with Tauri 2, React 19, and Tailwind.
+
+<div class="pv-window not-content">
+  <div class="pv-titlebar">
+    <span class="pv-dot r"></span><span class="pv-dot y"></span><span class="pv-dot g"></span>
+    <span class="pv-title">Prevail — wealth</span>
+  </div>
+  <div class="pv-body">
+    <div class="pv-side">
+      <div class="pv-grp">Domains</div>
+      <div class="pv-item on">wealth</div>
+      <div class="pv-item">health</div>
+      <div class="pv-item">tax</div>
+      <div class="pv-item">career</div>
+      <div class="pv-item">vision</div>
+    </div>
+    <div class="pv-main">
+      <div class="pv-tabs"><span class="on">chat</span><span>council</span><span>benchmark</span></div>
+      <div>
+        <span class="pv-chip gold">claude ✓</span>
+        <span class="pv-chip ai">codex ✓</span>
+        <span class="pv-chip">antigravity ·</span>
+        <span class="pv-chip">ollama ✓</span>
+      </div>
+      <p class="pv-q">you › should I prepay the mortgage or invest the cash?</p>
+      <div class="pv-verdict">◆ Verdict · synthesized by Claude — Invest if you hold ≥6 months liquidity and can ride a −30% drawdown; otherwise prepay. Liquidity is the binding test.</div>
+    </div>
+  </div>
+</div>
+<p class="pv-cap">A representation of the desktop layout — vault on the left, chat / council / benchmark on the right.</p>
 
 <Aside type="note">
 The desktop app and the CLI read the **same vault format**. Use the CLI on one machine and the desktop app on another against the same synced vault — they're two front-ends over one set of files.

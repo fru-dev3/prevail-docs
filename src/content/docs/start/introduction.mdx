@@ -46,6 +46,15 @@ The interface that ties them together: a TUI (terminal UI) with a sidebar of you
 | **Self-curating vault** | Every chat writes a one-line summary to `<domain>/_log/`. The vault writes its own decision log. |
 | **Hardened by default** | Env-scrubbed subprocesses, prompt-injection–aware operating manual, OAuth tokens `chmod 0600`. |
 
+## Two front-ends, one vault
+
+Prevail comes two ways, both reading the **same markdown vault**:
+
+- **[Prevail CLI](/start/installation/)** — the full terminal cockpit. Council, frameworks, lenses, scheduled briefings, the Telegram bridge, connectors, and the MCP server. This is the complete surface.
+- **[Prevail Desktop](/desktop/overview/)** — a native macOS app with a vault picker, domain sidebar, chat, council, and the benchmark viewer. No terminal required.
+
+Run the CLI on your main machine and the desktop app on another against the same synced vault — they're interchangeable views over one set of files.
+
 ## What Prevail is *not*
 
 Prevail is a **single-user terminal cockpit** for personal decisions. You run it on your own machine, with your own AI CLI credentials, against a folder of your own markdown.
