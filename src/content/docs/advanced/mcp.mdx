@@ -1,0 +1,50 @@
+---
+title: The MCP server
+description: Prevail can run as a Model Context Protocol server, exposing your vault and council to any MCP client — with a bearer-token guard and a parent-process check.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail can run as a [Model Context Protocol](https://modelcontextprotocol.io) server over stdio, exposing your vault and council to other agents — the same protocol Claude Code and other MCP clients speak.
+
+## Run it
+
+```bash
+prevail mcp
+```
+
+This starts Prevail as a stdio MCP server. Point any MCP client at it the way you'd add any other MCP server. The tools panel in the cockpit (`▸ tools`) shows the exact snippet to paste into your client's config.
+
+## Authentication
+
+The MCP server is guarded two ways:
+
+- **Bearer token.** Clients must present `Authorization: prevail-<token>`, where the token is auto-generated and stored in `~/.prevail/mcp.json`. Without it, requests are refused.
+- **Parent-process check.** By default the server refuses to run if it's launched from a non-TTY context or an unrecognized parent process — a guard against something spawning it behind your back.
+
+If you're intentionally running it headless (e.g. from a launcher that isn't a TTY), bypass the parent check explicitly:
+
+```bash
+prevail mcp --unsafe-detach
+```
+
+The flag name is a warning: only use it when you understand why the guard is firing.
+
+<Aside type="caution" title="This is a powerful door">
+The MCP server gives a connected agent access to your vault and the council. Expose it only to clients you trust on a machine you control. Read the [threat model](/reference/security/) before wiring it to anything beyond your own laptop, and never commit `~/.prevail/mcp.json` — the bearer token is a credential.
+</Aside>
+
+## What it exposes
+
+Through MCP, a client can reach Prevail's vault and convene the council programmatically — letting another agent ask your council a question and read the synthesized verdict as part of its own reasoning. It's the bridge that lets Prevail be a *component* in a larger agent setup, not just a standalone cockpit.
+
+## When to use it
+
+- You're building a larger agent workflow and want it to consult your council as one of its tools.
+- You want another MCP-speaking app to read context from your vault.
+
+For everyday personal use you don't need the MCP server at all — the cockpit and the Telegram bridge cover it. The MCP server is the integration seam for when Prevail needs to talk to *other* software.
+
+Next: [Prevail Desktop →](/desktop/overview/)

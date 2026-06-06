@@ -1,0 +1,90 @@
+---
+title: Running & scoring
+description: Run the canonical benchmark against any CLI, model, or council; score the results with keyword matching and an LLM judge; and compare everything on a leaderboard.
+sidebar:
+  order: 2
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+The benchmark workflow is three steps: **run** a configuration against the questions, **score** the replies, and read the **leaderboard**.
+
+## List the questions
+
+```bash
+prevail bench list
+```
+
+Shows the 21 canonical questions (plus any of your own) with their domains and dimensions.
+
+## Run
+
+<Steps>
+
+1. **Run the suite** against the current setup:
+
+   ```bash
+   prevail bench run
+   prevail bench run --domain tax          only tax questions
+   prevail bench run --question tax-passive-loss-trap   a single question
+   ```
+
+2. **Run a specific CLI or model:**
+
+   ```bash
+   prevail bench run --canonical --cli claude --model opus
+   prevail bench run --canonical --cli codex --model gpt-5.4
+   ```
+
+3. **Run the whole council** against the suite:
+
+   ```bash
+   prevail bench run --canonical --council
+   ```
+
+</Steps>
+
+Each run writes to `<vault>/benchmark/runs/<date>_<cli>_<model>/` — the prompts sent, the replies received, and (after scoring) the grades.
+
+## Score
+
+```bash
+prevail bench score                       score the most recent run
+prevail bench score --run 2026-06-01_claude_opus
+prevail bench score --no-judge            keyword matching only, skip the LLM judge
+prevail bench score --judge-cli codex     use a specific CLI as the judge
+```
+
+Scoring has two layers:
+
+- **Keyword pass** — each question declares `expected_verdict_keywords`; the reply has to hit them. Fast, deterministic, no model needed.
+- **LLM judge** — a judge model (Claude by default) reads the question, the expected decision, and the model's reply, and assigns a score with a written rationale. Catches correct-but-differently-worded answers the keyword pass would miss.
+
+## Leaderboard
+
+```bash
+prevail bench leaderboard
+```
+
+Aggregates every scored run and ranks them — so you can see, across all your questions, which CLI and model (or which council configuration) actually serves *your* decisions best.
+
+```
+RANK  CLI/MODEL                 SCORE   PASSED   NOTES
+────  ────────────────────────  ─────   ──────   ──────────────────────
+ 1    council (claude chair)     94/100   20/21   missed: recency-cutoff
+ 2    claude / opus              89/100   19/21   missed: passive-loss, recency
+ 3    codex / gpt-5.4            85/100   18/21   strong on document analysis
+ 4    ollama / llama3.1          71/100   15/21   local-only baseline
+```
+
+## Drilling in
+
+In the [desktop app](/desktop/overview/), the benchmark viewer reads these same `runs/` folders and lets you click any leaderboard row to see the per-question prompts, replies, keyword hits, and judge rationale — useful for understanding *why* a model lost points, not just that it did.
+
+## Why bother
+
+- **Model upgrades become measurable.** When a new model ships, run the suite and see if it actually helps your decisions before switching your chair to it.
+- **Council tuning.** Compare `claude`-chaired vs `codex`-chaired councils on the questions you care about.
+- **Trust calibration.** A model that aces document analysis but fails insufficient-info recognition tells you exactly where to double-check its work.
+
+Next: [Telegram & your phone →](/advanced/telegram/)

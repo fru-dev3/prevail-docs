@@ -1,0 +1,127 @@
+---
+title: CLI command reference
+description: Every prevail subcommand in one place — boot, doctor, council, briefing, telegram, connectors, bench, schedule, daemon, mcp, and upgrade.
+sidebar:
+  order: 1
+---
+
+The complete `prevail` command surface. Inside the cockpit, the same actions are available as [slash commands](/cockpit/slash-commands/).
+
+## Core
+
+```bash
+prevail                    # boot the cockpit with your configured vault
+prevail init               # run the first-run wizard
+prevail demo               # boot the bundled synthetic vault
+prevail doctor             # check the vault + detect installed CLIs
+prevail doctor --debug     # also tail ~/.prevail/debug.log
+prevail --vault <path>     # override the vault path for any command
+```
+
+## Upgrade
+
+```bash
+prevail upgrade            # self-update from the latest GitHub release
+prevail upgrade --check    # report whether an update exists, don't install
+prevail upgrade --force    # skip the confirmation prompt
+prevail upgrade --pre      # include prereleases
+```
+
+## Council
+
+```bash
+prevail council ...        # council operations from the shell
+```
+
+Most council work happens interactively with [`/council`](/council/overview/) in the cockpit; the shell form is there for scripting.
+
+## Briefings
+
+```bash
+prevail briefing list
+prevail briefing add --cron "<expr>" --domain <name> --prompt "<text>" \
+    [--mode council|single] [--deliver log|telegram|both]
+prevail briefing run <id>
+prevail briefing remove <id>
+```
+
+→ [Scheduled briefings](/advanced/briefings/)
+
+## Schedule (low-level)
+
+```bash
+prevail schedule list
+prevail schedule add "<cron>" "<command>" [--name <name>]
+prevail schedule run <id>
+prevail schedule remove <id>
+prevail schedule tick                     # fire everything due now (debug)
+```
+
+## Telegram
+
+```bash
+prevail telegram status
+prevail telegram setup <bot-token>
+prevail telegram add-user <chat-id>
+prevail telegram remove-user <chat-id>
+prevail telegram set-default <cli|domain|council> <value>
+```
+
+→ [Telegram & your phone](/advanced/telegram/)
+
+## Connectors
+
+```bash
+prevail connectors list
+prevail connectors test <id>              # probe auth status
+prevail connectors probe <id>             # alias of test
+prevail connectors oauth <id>             # run the OAuth flow
+prevail connectors skills <id>            # list a connector's runnable skills
+prevail connectors run <id> <skill> [--input key=value ...]
+```
+
+→ [Using connectors](/connectors/using/)
+
+## Benchmarks
+
+```bash
+prevail bench list
+prevail bench run [--domain <name>] [--question <id>]
+prevail bench run --canonical [--cli <kind>] [--model <id>] [--council]
+prevail bench seed --domain <name>
+prevail bench seed --from-log <domain>
+prevail bench score [--run <name>] [--no-judge] [--judge-cli <kind>]
+prevail bench leaderboard
+```
+
+→ [Running & scoring](/benchmarks/running/)
+
+## Daemon & MCP
+
+```bash
+prevail daemon --telegram                 # headless: poll Telegram + tick briefings
+prevail mcp                               # run as a stdio MCP server
+prevail mcp --unsafe-detach               # bypass the parent-process check
+```
+
+→ [The MCP server](/advanced/mcp/)
+
+## Quick reference
+
+| Command | Does |
+|---|---|
+| `prevail` | Boot the cockpit |
+| `prevail init` | First-run wizard |
+| `prevail demo` | Synthetic vault |
+| `prevail doctor` | Health check |
+| `prevail upgrade` | Self-update |
+| `prevail council …` | Council from the shell |
+| `prevail briefing …` | Scheduled domain briefings |
+| `prevail schedule …` | Arbitrary recurring commands |
+| `prevail telegram …` | Configure the Telegram bridge |
+| `prevail connectors …` | List / test / oauth / run connectors |
+| `prevail bench …` | Run, score, and rank the benchmark |
+| `prevail daemon --telegram` | Headless bot + briefing ticker |
+| `prevail mcp` | Stdio MCP server |
+
+Next: [Configuration →](/reference/configuration/)

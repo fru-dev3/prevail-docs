@@ -1,0 +1,73 @@
+---
+title: Logs & journal
+description: Every turn writes a one-line summary to the domain's _log/, and durable conclusions distill into the _journal/. Your vault keeps its own decision log automatically.
+sidebar:
+  order: 4
+---
+
+Prevail's vault is **self-curating**: you don't have to remember to write things down, because every turn records itself. Two mechanisms do the work — the **log** and the **journal**.
+
+## The log (`_log/`)
+
+Every chat turn appends a one-line summary to `<domain>/_log/YYYY-MM-DD.md` — one file per day. Over time, this becomes a literal diary of every decision you worked through, organized by domain and date.
+
+```markdown
+## 2026-06-04
+
+### (14:32) ◆ council-verdict · BLUF ● ON · 4 calls · 2.8k↑ 1.2k↓ · ~$0.02
+
+**You:** should I sell or rent?
+
+**Verdict:** Rent IF (a) appreciation likely, (b) landlord cost contained. Sell for migration or cap-gains harvest.
+
+▸ disagreed: Claude (rent), Codex (sell), Antigravity (rent), Ollama (rent)
+
+---
+
+### (13:15) ◇ single · WIN · 3 calls · 1.5k↑ 800↓ · ~$0.01
+
+**You:** what's my biggest financial risk?
+
+**Claude:** Concentration in tech equity. Recommend rebalance toward broad market.
+```
+
+Each entry records the verdict, the framework, whether it was a council or single turn, the call count, token usage, and an estimated cost.
+
+### Integrity hashes
+
+Alongside each `YYYY-MM-DD.md` sits a `YYYY-MM-DD.md.shasum` file recording a SHA-256 hash per entry. This lets Prevail (and you) detect if a log entry was tampered with after the fact — a small but deliberate integrity guarantee on the record of your decisions.
+
+## The journal (`_journal/`)
+
+Where the log is chronological, the **journal** is distilled and durable. The `/distill` command extracts the lasting conclusions from a conversation into two files:
+
+| File | Holds |
+|---|---|
+| `_journal/decisions.md` | High-level decisions you've made |
+| `_journal/facts.md` | Durable factual claims worth keeping |
+
+The distiller is a **strict two-section parser**: it only accepts text in the expected `DECISION:` / `FACTS:` shape and silently drops everything else. That's a security measure — it prevents a model reply from injecting arbitrary content into your journal. See [Security](/reference/security/).
+
+## Searching across everything
+
+Every turn is also written to a SQLite database under `~/.prevail/sessions/`, indexed with full-text search (FTS5). From the cockpit:
+
+```text
+/search liquidity floor      find every past chat mentioning this, any domain
+/history 10                  recall your last 10 prompts in this domain
+```
+
+→ [Slash commands](/cockpit/slash-commands/)
+
+## Watching it happen
+
+```text
+/heatmap 30      activity heatmap for the last 30 days
+/watch           live-monitor vault changes as turns are written
+```
+
+## Turning it off
+
+The **Save** dial in the [ConfigBar](/cockpit/configbar/) controls whether a turn is logged and distilled. It's on by default — leaving it on is what keeps the vault writing its own history. Switch it off for throwaway questions you don't want recorded.
+
+Next: [Syncing your vault →](/vault/sync/)

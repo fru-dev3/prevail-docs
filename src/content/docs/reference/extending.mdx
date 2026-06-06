@@ -1,0 +1,105 @@
+---
+title: Extending Prevail
+description: Add a framework, a lens, a new CLI bridge, a domain, or a community connector. Prevail is MIT-licensed and built to be forked.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail is MIT-licensed and built to be extended. Most additions are a few lines in one file. This page maps each extension point to the file you edit.
+
+<Aside type="note">
+File paths below are in the [Prevail source tree](https://github.com/fru-dev3/prevail). Clone it, edit, and `bun run build` — see [Installation → from source](/start/installation/).
+</Aside>
+
+## Add a framework
+
+A [framework](/council/frameworks/) shapes how answers are structured. Edit `src/framework.ts`:
+
+```ts
+export type FrameworkId = "bluf" | "win" | /* … */ | "my-framework";
+
+export const FRAMEWORKS: readonly Framework[] = [
+  // …existing frameworks
+  {
+    id: "my-framework",
+    label: "LABEL",            // ≤10 chars — it's a ConfigBar chip
+    blurb: "one-line tooltip",
+    instruction: "Apply X. Structure the answer as ...",  // keep it terse
+  },
+];
+```
+
+Keep the `instruction` short — some CLIs echo long preambles verbatim.
+
+## Add a lens
+
+A [lens](/council/lenses/) shapes the perspective. Edit `src/lens.ts` — same shape:
+
+```ts
+export type LensId = "first-principles" | /* … */ | "my-lens";
+
+export const LENSES: readonly Lens[] = [
+  {
+    id: "my-lens",
+    label: "MY LENS",          // ≤14 chars
+    blurb: "angle of attack",
+    instruction: "Reason about this as if ...",
+  },
+];
+```
+
+## Add a CLI bridge
+
+To add a new engine to the council, edit `src/cli-bridge.ts` in five places:
+
+1. **The union type** — add your CLI to `CliKind`:
+   ```ts
+   export type CliKind = "claude" | "codex" | /* … */ | "mistral";
+   ```
+2. **Detection** — add it to the `CANDIDATES` array so Prevail probes for it on boot.
+3. **Model versions** — declare the known models (`const MISTRAL_VERSIONS = [...]`).
+4. **Quick-picks** — add to `MODEL_QUICKPICKS_FALLBACK`.
+5. **Hint text** — add to `CLI_MODEL_HINT`.
+
+Once detected, the new CLI participates in the council and the ConfigBar like any built-in.
+
+## Add a domain
+
+No code needed:
+
+- **In the cockpit:** press `n` to scaffold a new domain folder.
+- **By hand:** create `<vault>/<name>/` with a `state.md`, then press `r` to rescan.
+
+→ [Domains](/vault/domains/)
+
+## Add a community connector
+
+Connectors are data, not code. Create a folder under `apps/community/<id>/` with a `manifest.json`, an optional `SKILL.md`, and runnable skills in `skills/`.
+
+→ [Building a connector](/connectors/building/)
+
+## Tech stack
+
+Useful context if you're hacking on the core:
+
+- **Runtime:** [Bun](https://bun.sh) ≥ 1.3. Single binary via `bun build --compile`.
+- **TUI:** [OpenTUI](https://opentui.com) — a Zig core with a React reconciler.
+- **UI:** React 19.
+- **Storage:** `bun:sqlite` (FTS5) for session search; everything else is markdown and JSON on disk.
+- **External binaries:** `claude`, `codex`, `agy`, `ollama`, called as subprocesses.
+- **Lint/format:** Biome.
+
+```bash
+bun install
+bun run dev          # hot-reload
+bun test src/        # tests
+bun run build        # compile dist/prevail
+```
+
+## Contributing
+
+See [`CONTRIBUTING.md`](https://github.com/fru-dev3/prevail/blob/main/CONTRIBUTING.md) for the contribution flow, the connector protocol, and coding conventions. Connectors and additional frameworks/lenses are especially welcome.
+
+Next: [Platform support →](/reference/platform/)

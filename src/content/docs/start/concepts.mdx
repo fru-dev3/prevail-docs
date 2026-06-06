@@ -1,0 +1,78 @@
+---
+title: Core concepts
+description: The five nouns that make up Prevail — vault, domain, council, connector, and skill — and how they fit together.
+sidebar:
+  order: 4
+---
+
+Five nouns make up the whole of Prevail. Learn these and everything else is detail.
+
+## Vault
+
+A **vault** is a folder on your disk that holds your life. It's the root that contains every domain. Nothing about it is special — it's plain files — which is exactly the point: you can edit it in any editor, search it with `grep`, version it with `git`, and sync it with iCloud or Tailscale.
+
+You choose where it lives during the first-run wizard. Switch vaults any time. The bundled demo vault (`prevail demo`) is a fully-populated synthetic one.
+
+→ [Vault structure](/vault/structure/)
+
+## Domain
+
+A **domain** is one area of your life: `wealth`, `health`, `tax`, `career`, `vision`. Concretely, it's a subfolder of the vault containing a handful of markdown files (`state.md`, `QUICKSTART.md`, `PROMPTS.md`, `config.md`), document folders, a `skills/` folder, and auto-written `_log/` and `_journal/` folders.
+
+Any folder with a `state.md` is a domain. Prevail ships ~20 standard ones but you can add your own — press `n` in the cockpit, or just `mkdir` it.
+
+Each domain remembers its own settings: the framework and lens you set on `wealth` stay on `wealth`.
+
+→ [Domains](/vault/domains/)
+
+## Council
+
+The **council** is Prevail's headline mechanic. Instead of asking one model, you ask several — Claude, Codex, Antigravity, Ollama — *in parallel*. Each answers independently. Then a **chair** model reads every reply and writes a single synthesized verdict, plus a panel highlighting where the panelists diverged.
+
+You convene it per-question with `/council <prompt>` or leave **Council ● ON** so every question fans out.
+
+→ [The council](/council/overview/)
+
+## Connector
+
+A **connector** integrates a real-world app — your bank, calendar, email, password manager — so its data can flow into the vault. Each connector declares how it authenticates: `api`, `oauth`, `mcp`, `browser`, or `manual`. Prevail ships reference connectors for Plaid, 1Password, Google Calendar, GitHub, LinkedIn, YouTube Analytics, and more.
+
+Connectors appear in the apps sidebar with a live auth status. You can test, run OAuth flows, and invoke individual connector skills from the shell or the cockpit.
+
+→ [Connector overview](/connectors/overview/)
+
+## Skill
+
+A **skill** is a reusable unit of work, stored as a `SKILL.md` markdown file under `<domain>/skills/`. It describes when to run it, what inputs it needs, and the steps to follow — "synthesize this month's wealth changes," "review a lease for red flags."
+
+Skills are just markdown, so you edit them in any editor and share them via git. The fastest way to make one is `/distill`, which turns the conversation you just had into a skill draft.
+
+→ [Skills](/vault/skills/)
+
+---
+
+## How they fit together
+
+```
+                         ┌──────────────── vault (a folder you own) ───────────────┐
+                         │                                                          │
+   you ──ask──▶  cockpit │   domain: wealth/   ── state.md · skills/ · _log/ ...    │
+                  │      │   domain: health/                                        │
+                  │      │   domain: tax/                                           │
+                  │      └──────────────────────────────────────────────────────────┘
+                  │
+                  ├──fan out──▶  council  ──▶  claude · codex · agy · ollama
+                  │                                  │
+                  │                            chair synthesizes
+                  │                                  ▼
+                  └──reads context from──▶  connectors  ──▶  bank · calendar · email
+```
+
+1. You open a **domain** in the **cockpit** and ask a question.
+2. Prevail reads that domain's markdown (and any **connector** data) as context.
+3. If the **council** is on, the question fans out to every engine; a chair writes the verdict.
+4. The turn is logged back into the vault, and you can `/distill` it into a **skill**.
+
+Everything is a file. Nothing leaves your machine except the prompts you send to the CLIs you already use.
+
+Next: [The cockpit layout →](/cockpit/layout/)

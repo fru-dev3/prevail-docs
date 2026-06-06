@@ -1,0 +1,234 @@
+/* ============================================================================
+   Prevail Docs — brand theme
+   Maps the prevail.sh design tokens onto Starlight's CSS variables.
+   Gold #c4a35a · AI-cyan #5fbfff · near-black #0a0a0c
+   Fonts: Inter (sans) · Instrument Serif (display) · Geist Mono (code)
+   ========================================================================= */
+
+:root {
+  --pv-gold: #c4a35a;
+  --pv-gold-bright: #d4b675;
+  --pv-gold-dim: #8a7440;
+  --pv-ai: #5fbfff;
+  --pv-ai-bright: #88d0ff;
+  --pv-claude: #c4a35a;
+  --pv-codex: #5fbfff;
+  --pv-antigravity: #6ee787;
+  --pv-ollama: #c4a8ff;
+
+  --sl-font: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --sl-font-mono: "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, monospace;
+}
+
+/* ── Dark theme (default) ────────────────────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  /* Accent = brand gold */
+  --sl-color-accent-low: #2a2310;
+  --sl-color-accent: #c4a35a;
+  --sl-color-accent-high: #e6cf95;
+
+  /* Warm near-black surface stack from prevail.sh */
+  --sl-color-black: #0a0a0c;
+  --sl-color-gray-7: #111114;
+  --sl-color-gray-6: #16171b;
+  --sl-color-gray-5: #1c1d22;
+  --sl-color-gray-4: #2a2c33;
+  --sl-color-gray-3: #54565e;
+  --sl-color-gray-2: #b6b1a3;
+  --sl-color-gray-1: #e7e4da;
+  --sl-color-white: #f5f3ed;
+
+  --sl-color-bg: #0a0a0c;
+  --sl-color-bg-nav: rgba(10, 10, 12, 0.82);
+  --sl-color-bg-sidebar: #0c0c0f;
+  --sl-color-text-accent: var(--pv-gold-bright);
+  --sl-color-hairline: #1f2127;
+  --sl-color-hairline-light: #2a2c33;
+}
+
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --sl-color-accent-low: #f0e7cf;
+  --sl-color-accent: #a8862d;
+  --sl-color-accent-high: #5c4a16;
+
+  --sl-color-black: #faf8f1;
+  --sl-color-gray-7: #ffffff;
+  --sl-color-gray-6: #f5f2e8;
+  --sl-color-gray-5: #eee9d8;
+  --sl-color-gray-4: #d8d1bd;
+  --sl-color-gray-3: #8a8270;
+  --sl-color-gray-2: #5a544a;
+  --sl-color-gray-1: #2a2620;
+  --sl-color-white: #1a1814;
+
+  --sl-color-bg: #faf8f1;
+  --sl-color-bg-nav: rgba(250, 248, 241, 0.85);
+  --sl-color-bg-sidebar: #f5f2e8;
+  --sl-color-text-accent: #a8862d;
+  --sl-color-hairline: #e8e3d1;
+  --sl-color-hairline-light: #d8d1bd;
+}
+
+/* ── Typography ──────────────────────────────────────────────────────────── */
+body {
+  font-feature-settings: "ss01" 1, "cv11" 1;
+}
+
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+h1#_top,
+.hero h1 {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Page hero title uses the Instrument Serif display face for brand feel */
+.hero h1,
+.hero .tagline {
+  font-family: var(--sl-font);
+}
+
+/* ── Site title / header ─────────────────────────────────────────────────── */
+.site-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+header.header {
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+/* Logo sizing */
+.site-title img {
+  height: 1.6rem;
+  width: auto;
+}
+
+/* ── Links & accents ─────────────────────────────────────────────────────── */
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--sl-color-text-accent);
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, var(--pv-gold) 45%, transparent);
+}
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+  text-decoration-color: var(--pv-gold);
+}
+
+/* ── Inline code ─────────────────────────────────────────────────────────── */
+.sl-markdown-content code:not(:where(.not-content *)) {
+  background: color-mix(in srgb, var(--pv-gold) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pv-gold) 18%, transparent);
+  border-radius: 0.35rem;
+  padding: 0.1em 0.38em;
+  font-size: 0.875em;
+  color: var(--sl-color-white);
+}
+
+/* ── Code blocks: glow + rounded ─────────────────────────────────────────── */
+.expressive-code {
+  margin: 1.25rem 0;
+}
+.expressive-code .frame {
+  box-shadow: 0 1px 0 0 var(--sl-color-hairline),
+    0 14px 40px -22px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Sidebar polish ──────────────────────────────────────────────────────── */
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover {
+  background: color-mix(in srgb, var(--pv-gold) 12%, transparent);
+  color: var(--sl-color-text-accent);
+  border-radius: 0.4rem;
+  font-weight: 600;
+}
+nav.sidebar .sidebar-content summary,
+nav.sidebar .sidebar-content .group-label span {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+/* ── Cards (CardGrid / Card components) ──────────────────────────────────── */
+.card {
+  background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-hairline) !important;
+  border-radius: 0.75rem !important;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.card:hover {
+  border-color: color-mix(in srgb, var(--pv-gold) 40%, transparent) !important;
+  transform: translateY(-2px);
+}
+.card .icon {
+  color: var(--pv-gold);
+  background: color-mix(in srgb, var(--pv-gold) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pv-gold) 20%, transparent);
+}
+
+/* ── Hero (splash) page ──────────────────────────────────────────────────── */
+.hero > img,
+.hero > .hero-html {
+  filter: drop-shadow(0 0 60px rgba(196, 163, 90, 0.18));
+}
+.hero .actions a[data-variant="primary"] {
+  background: linear-gradient(180deg, var(--pv-gold-bright), var(--pv-gold));
+  color: #1a1408;
+  border: none;
+  font-weight: 650;
+}
+.hero .actions a[data-variant="primary"]:hover {
+  background: linear-gradient(180deg, #e6cf95, var(--pv-gold-bright));
+}
+
+/* Subtle gold glow under the top nav on splash pages */
+.page > .main-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 320px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 100% at 50% 0%,
+    rgba(196, 163, 90, 0.07) 0%,
+    transparent 70%
+  );
+  z-index: 0;
+}
+
+/* ── Asides / callouts tinted to brand ───────────────────────────────────── */
+.starlight-aside--tip {
+  border-inline-start-color: var(--pv-antigravity);
+}
+.starlight-aside--note {
+  border-inline-start-color: var(--pv-ai);
+}
+.starlight-aside--caution {
+  border-inline-start-color: var(--pv-gold);
+}
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+.sl-markdown-content table {
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.sl-markdown-content th {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  font-weight: 600;
+}
+.sl-markdown-content th,
+.sl-markdown-content td {
+  border-color: var(--sl-color-hairline) !important;
+}
+
+/* ── Per-CLI color dots used in prose (.cli-claude etc) ──────────────────── */
+.cli-claude { color: var(--pv-claude); font-weight: 600; }
+.cli-codex { color: var(--pv-codex); font-weight: 600; }
+.cli-antigravity { color: var(--pv-antigravity); font-weight: 600; }
+.cli-ollama { color: var(--pv-ollama); font-weight: 600; }

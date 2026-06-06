@@ -1,0 +1,85 @@
+---
+title: Telegram & your phone
+description: Run the Prevail cockpit from your phone over a Telegram bridge — convene the council, switch domains, and apply frameworks from anywhere, with a mandatory chat-ID allowlist.
+sidebar:
+  order: 1
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+The same council, the same vault, the same commands — from your phone. Prevail's Telegram bridge runs the cockpit headless and talks to you through a bot.
+
+## Setup
+
+<Steps>
+
+1. **Create a bot.** Message [@BotFather](https://t.me/BotFather) on Telegram, send `/newbot`, and copy the token it gives you.
+
+2. **Register the token:**
+
+   ```bash
+   prevail telegram setup <bot-token>
+   ```
+
+   It's stored at `~/.prevail/telegram.json` with `chmod 0600`.
+
+3. **Allowlist yourself.** This is mandatory — the bridge ignores anyone not on the list:
+
+   ```bash
+   prevail telegram add-user <chat-id>
+   ```
+
+   (Your chat ID comes back the first time you message the bot, or from a bot like `@userinfobot`.)
+
+4. **Run the daemon:**
+
+   ```bash
+   prevail daemon --telegram
+   ```
+
+   It polls Telegram for your messages and ticks any scheduled [briefings](/advanced/briefings/).
+
+</Steps>
+
+## Using it
+
+Once the daemon is running, message your bot like you'd type in the cockpit:
+
+```text
+/council should I take the contract or stay salaried?
+/domain wealth
+/framework bluf
+what's my runway if I quit today?
+```
+
+The council convenes on your machine, the verdict comes back as a message, and the turn is logged into your vault exactly as if you'd asked from the terminal.
+
+## Defaults for the bridge
+
+Set what mobile turns default to, so you don't have to specify every time:
+
+```bash
+prevail telegram set-default cli claude
+prevail telegram set-default domain chief
+prevail telegram set-default council on
+```
+
+## Managing access
+
+```bash
+prevail telegram status              show config + allowlisted users
+prevail telegram add-user <id>       grant access
+prevail telegram remove-user <id>    revoke access
+```
+
+You can also manage all of this from inside the cockpit with `/telegram` (alias `/tg`).
+
+<Aside type="caution" title="Security">
+The Telegram bridge is a remote door into a tool that reads your most personal data. The allowlist is enforced — only chat IDs you've explicitly added are answered. Run the daemon only on a machine you control, and read the [threat model](/reference/security/) before exposing it. The bot token grants control of the bot; treat it like a password.
+</Aside>
+
+## Where to run it
+
+Run `prevail daemon --telegram` on the always-on machine that holds your vault — a Mac mini, a home server, a cheap VPS with your CLIs logged in. It needs the vault and the AI CLIs; it doesn't need your laptop to be awake. The daemon also writes a PID file so a second copy won't start by accident.
+
+Next: [Scheduled briefings →](/advanced/briefings/)

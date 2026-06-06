@@ -1,0 +1,91 @@
+---
+title: Slash commands
+description: The complete reference for Prevail's in-cockpit slash commands — council, frameworks, search, web access, distill, connectors, and more.
+sidebar:
+  order: 3
+---
+
+Inside the chat pane, anything starting with `/` is a command. Type `/help` any time to list them all. Most have short aliases.
+
+## Session control
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/help` | | List every slash command |
+| `/clear` | | Reset the conversation (keeps your config) |
+| `/exit` | `/quit`, `/q`, `/close` | Return to the cockpit |
+
+## Switching engines
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/claude [model]` | | Switch this chat to Claude Code |
+| `/codex [model]` | | Switch this chat to Codex |
+| `/antigravity [model]` | `/agy` | Switch to Antigravity (Google's `agy`) |
+| `/ollama [model]` | | Switch to local Ollama |
+| `/model <name>` | | Set the model on the current CLI; `/model default` clears it |
+
+## The council
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/council [prompt]` | | Fan the question to every available CLI in parallel; the chair synthesizes a verdict |
+| `/council use <cli> …` | | Set which CLIs sit on the council |
+| `/council model <cli> [model]` | | Pin a specific model for one panelist |
+| `/council chair [cli] [model]` | | Pin which CLI/model acts as the chair |
+| `/council config` | `/council status`, `/council show` | Show the current council configuration |
+| `/gut <text>` | | Capture your own gut take *before* synthesis — the chair weighs it in |
+
+→ [How the council works](/council/overview/)
+
+## Shaping the answer
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/framework <id>` | `/fw` | Apply a framework: `bluf`, `win`, `scqa`, `sbar`, `ooda`, `proscons`, `steelman` |
+| `/web [on\|off\|allow\|deny\|status]` | | Toggle web access for the turn (default: deny) |
+
+→ [Frameworks](/council/frameworks/) · [Lenses](/council/lenses/)
+
+## Memory & recall
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/distill` | `/skill` | Synthesize this conversation into a reusable `SKILL.md` draft |
+| `/search <query>` | `/s` | Full-text search across every past chat, any domain |
+| `/history [n]` | `/h`, `/prompts` | Recall your last *n* prompts in this domain |
+
+→ [Skills](/vault/skills/) · [Logs & journal](/vault/logs-journal/)
+
+## Connectors & integrations
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/connectors` | `/conn`, `/connect` | List available connectors |
+| `/connectors test <id>` | | Probe a connector's auth status |
+| `/connectors oauth <id>` | | Run a connector's OAuth flow |
+
+→ [Connectors](/connectors/overview/)
+
+## Scheduling & mobile
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/telegram [sub] [arg]` | `/tg` | Manage Telegram settings from the cockpit |
+| `/briefing [sub] [arg]` | | Manage scheduled briefings |
+| `/calibration [sub] [arg]` | `/cal` | Manage council calibration data |
+
+→ [Telegram](/advanced/telegram/) · [Briefings](/advanced/briefings/)
+
+## Observability
+
+| Command | Aliases | What it does |
+|---|---|---|
+| `/heatmap [days]` | `/heat`, `/activity` | Show an activity heatmap for the last *n* days |
+| `/watch [limit]` | `/watcher`, `/obs` | Monitor live vault changes as they happen |
+
+:::tip
+Anything you can do with a slash command in the cockpit, you can usually also do from the shell with a `prevail …` subcommand — handy for scripting and cron. See the [CLI reference](/reference/cli/).
+:::
+
+Next: [The ConfigBar →](/cockpit/configbar/)

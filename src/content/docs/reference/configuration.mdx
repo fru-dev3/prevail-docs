@@ -1,0 +1,85 @@
+---
+title: Configuration
+description: Prevail's config lives in ~/.prevail/config.json — vault path, model pins, per-domain frameworks and lenses, web-access defaults, the chair pin, and the council call cap.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail's machine-local configuration lives in `~/.prevail/config.json`. Most of it you'll set through the cockpit and the first-run wizard, but it's plain JSON you can edit directly.
+
+## `~/.prevail/config.json`
+
+```json
+{
+  "vaultPath": "/Users/you/life-vault",
+  "chairModel": {
+    "cli": "claude",
+    "model": "claude-opus-4-7"
+  },
+  "modelPins": {
+    "claude": "opus",
+    "codex": "gpt-5.4",
+    "antigravity": "Gemini 3.1 Pro (High)",
+    "ollama": "llama3.1"
+  },
+  "domainFramework": {
+    "wealth": "bluf",
+    "tax": "scqa"
+  },
+  "domainLens": {
+    "health": "first-principles"
+  },
+  "webAccess": {
+    "default": false,
+    "wealth": true,
+    "research": true
+  },
+  "councilMaxCallsPerTurn": 16
+}
+```
+
+| Key | What it controls |
+|---|---|
+| `vaultPath` | Which folder is your vault |
+| `chairModel` | The pinned chair CLI + model for council synthesis ([`/council chair`](/council/overview/)) |
+| `modelPins` | The default model for each CLI |
+| `domainFramework` | Per-domain default [framework](/council/frameworks/) |
+| `domainLens` | Per-domain default [lens](/council/lenses/) |
+| `webAccess` | Web-access default, with per-domain overrides |
+| `councilMaxCallsPerTurn` | Hard cap on parallel calls per turn (default 16) |
+
+Per-domain keys are why `wealth` and `tax` can behave completely differently — the settings you change in the cockpit for one domain are written here under that domain's name.
+
+## Other files in `~/.prevail/`
+
+| File | Holds | Notes |
+|---|---|---|
+| `telegram.json` | Bot token + chat-ID allowlist | `chmod 0600` |
+| `mcp.json` | Auto-generated MCP bearer token | `chmod 0600`, never commit |
+| `debug.log` | Diagnostics | `prevail doctor --debug` tails it |
+| `sessions/` | SQLite chat history (FTS5) | Powers `/search` |
+| `connectors/<id>/auth/` | Per-connector tokens & sessions | `chmod 0600` |
+| `apps/community/` | Connector definitions | |
+| `daemon.pid` | PID file for the daemon | Prevents double-start |
+
+## Vault-level state
+
+Some configuration travels *with* the vault rather than the machine, because it's about your data, not your credentials:
+
+| File | Holds |
+|---|---|
+| `<vault>/AGENTS-operating.md` | The operating manual prepended to agent calls — edit to change how agents treat your vault |
+| `<vault>/.schedule.json` | Recurring commands |
+| `<vault>/.briefings.json` | Scheduled domain briefings |
+
+<Aside type="caution">
+`~/.prevail/` holds secrets and machine-local state. Keep it out of any sync or version control. The vault-level files above are safe (and useful) to sync. See [Syncing your vault](/vault/sync/).
+</Aside>
+
+## Environment
+
+Prevail reads no special environment variables of its own beyond the standard ones (`$EDITOR` for the `e` key, `$PATH` to find the CLIs). It deliberately **scrubs** sensitive variables out of the environment before spawning any CLI subprocess — see [Security](/reference/security/).
+
+Next: [Security & threat model →](/reference/security/)

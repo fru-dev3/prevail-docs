@@ -1,0 +1,73 @@
+---
+title: Skills
+description: Skills are reusable units of work stored as SKILL.md markdown in a domain. Distill a good conversation into one with /distill, then run it again any time.
+sidebar:
+  order: 3
+---
+
+A **skill** is a reusable unit of work, written as a `SKILL.md` file under `<domain>/skills/`. It captures *how* to do something — "synthesize this month's wealth changes," "review a lease for red flags" — so a workflow you figured out once becomes a one-click action forever after.
+
+Like everything in the vault, skills are just markdown. Edit them in any editor, share them via git, no special tooling required.
+
+## Anatomy of a skill
+
+```markdown
+---
+name: Monthly Wealth Review
+description: Synthesize this month's changes across the wealth domain
+type: distilled
+source_session_id: 2026-06-04-a91f
+created_at: 2026-06-04
+---
+
+## How to use
+Run at month-end to roll up account changes into a single brief.
+
+## Inputs
+- **month** (optional): which month to review; defaults to the current one.
+
+## Steps
+1. Read `state.md` — net worth, account balances, recent decisions.
+2. Compute the delta versus last month's brief in `02_briefs/`.
+3. Format as a table plus a one-paragraph narrative.
+4. Write the result to `02_briefs/YYYY-MM-DD_monthly-review.md`.
+
+## Outputs
+- A markdown brief in `02_briefs/`.
+```
+
+The frontmatter is optional metadata; the body is plain instructions an agent follows.
+
+## Where skills come from
+
+| Source | How |
+|---|---|
+| **Distilled** | `/distill` turns the conversation you just had into a `SKILL.md` draft |
+| **Hand-written** | Create `skills/<name>/SKILL.md` yourself in any editor |
+| **Shared** | Drop a skill someone published into your domain's `skills/` folder |
+
+### Distilling a conversation
+
+The fastest path. After a useful exchange:
+
+```text
+/distill
+```
+
+Prevail reads the conversation and writes a structured skill draft — name, description, steps, outputs — into the domain's `skills/`. Tidy it up and it's ready to reuse. (`/skill` is an alias.)
+
+## Running skills
+
+- In the cockpit, each domain's **skills** tab lists its skills and lets you toggle which ones the chair may call.
+- When you open a domain, the agent is told which skills are available, so you can simply ask for one by name.
+- Connector skills (a different thing — they sync app data) are run from the shell with `prevail connectors run`. See [Using connectors](/connectors/using/).
+
+## Why markdown skills
+
+Because a skill is just a file:
+
+- **Versioned** — `git log skills/` is the history of how a workflow evolved.
+- **Portable** — copy one between domains or share it with someone running Prevail.
+- **Inspectable** — there's no hidden behavior; the steps are right there in plain text.
+
+Next: [Logs & journal →](/vault/logs-journal/)

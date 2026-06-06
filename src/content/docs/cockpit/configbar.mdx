@@ -1,0 +1,67 @@
+---
+title: The ConfigBar
+description: The single row of per-turn dials at the bottom of the cockpit — Council, Framework, Lens, Web, Save, Serendipity, and Auto — each clickable.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Every per-turn dial lives in one place: the **ConfigBar** along the bottom of the cockpit. Each chip is clickable, and each has a keyboard/slash equivalent. Settings are remembered **per domain** — what you set on `wealth` stays on `wealth`.
+
+```
+ Council ●ON · Framework ◆BLUF · Lens ◇none · Web ●OFF · Save ✓ · Serendipity · Auto
+```
+
+## The dials
+
+### Council
+
+Toggles whether questions fan out to every available CLI or go to just the active one.
+
+- **● ON** — every question convenes the full council and a chair synthesizes a verdict.
+- **◆ OFF** — single-engine mode; your message goes to one CLI.
+
+Equivalent: `/council` per-turn, or `/council use …` to configure who's on it. → [The council](/council/overview/)
+
+### Framework
+
+Cycles the structure the answer is written in. One click rewrites the next reply in that shape.
+
+`BLUF` · `WIN` · `SCQA` · `SBAR` · `OODA` · `pros/cons` · `steelman`
+
+Equivalent: `/framework <id>`. → [Frameworks](/council/frameworks/)
+
+### Lens
+
+Cycles the *perspective* the answer is reasoned from — `first principles`, `contrarian`, `outsider`, `executor`, `mom`, `dad`, and more. Set it to `all` and the council multiplies: every panelist answers through every lens.
+
+Equivalent: set per domain. → [Lenses](/council/lenses/)
+
+### Web
+
+Controls whether this turn may reach the internet. Default is **deny** — when denied, Prevail appends an explicit no-web note to the prompt so the model doesn't pretend to browse.
+
+`on` / `off` / `allow` / `deny` / `status`. Equivalent: `/web on`. Per-domain default lives in your [config](/reference/configuration/).
+
+### Save
+
+Whether the turn is written to the domain's `_log/` and distilled into the `_journal/`. On by default — this is what makes the vault self-curating. → [Logs & journal](/vault/logs-journal/)
+
+### Serendipity
+
+Nudges the council toward less obvious, more exploratory angles — useful when you want to be surprised rather than confirmed.
+
+### Auto
+
+Lets Prevail pick sensible per-turn settings for you (framework, lens, who's on the council) based on the domain and the question, instead of you dialing each one.
+
+<Aside type="tip">
+The ConfigBar captures its settings at **send** time, not receive time. Change a dial mid-stream and it applies to your *next* turn, not the one already in flight — so you can line up the next question's framework while the current answer is still arriving.
+</Aside>
+
+## Cost preview
+
+When the council (or `lens=all`) would produce many parallel calls, Prevail prints an estimated call count and cost *before* firing, and caps the fan-out at `councilMaxCallsPerTurn` (default 16). You're never surprised by a 32-call turn. → [Configuration](/reference/configuration/)
+
+Next: [The council →](/council/overview/)

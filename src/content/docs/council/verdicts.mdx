@@ -1,0 +1,68 @@
+---
+title: Chair, verdicts & divergence
+description: How Prevail turns four parallel replies into one verdict — the chair model, the divergence panel that surfaces disagreement, and how it's all persisted.
+sidebar:
+  order: 4
+---
+
+The council produces several answers. The **chair** turns them into one — and the **divergence panel** makes sure the disagreement isn't lost in the process.
+
+## The chair
+
+The chair is the model that reads every panelist's reply and writes the final synthesized verdict.
+
+- **Default:** the first panelist to answer successfully becomes the chair.
+- **Pin one:** `/council chair claude opus` fixes the chair to a specific CLI and model, persisted in your [config](/reference/configuration/).
+
+A good chair is decisive: it doesn't just average the panel, it weighs the arguments, names the binding constraint, and commits to a recommendation — usually conditional ("invest *if* …").
+
+## The verdict
+
+The verdict is the synthesized answer, rendered in the active [framework](/council/frameworks/). It's the thing you read first. In the example below, the chair reduced a four-way debate to a single conditional rule:
+
+```
+┌─ ◆ Verdict · synthesized by Claude ────────────────────────────┐
+│ Invest IF (a) ≥6mo liquidity, (b) you'll hold through −30%,    │
+│ (c) spread > 2%. Else prepay. Liquidity is the binding test.   │
+└────────────────────────────────────────────────────────────────┘
+```
+
+## The divergence panel
+
+This is the part most "ask several models" tools throw away. When panelists disagree, Prevail surfaces *where* and *why* in its own panel above the verdict:
+
+```
+┌─ ▸ Where panelists disagreed ──────────────────────────────────┐
+│ Liquidity floor: Codex says 6mo, Antigravity says 12mo (risk-off). │
+└────────────────────────────────────────────────────────────────┘
+```
+
+The disagreement is the signal. When every model agrees, you have a clear call. When they split, the *axis they split on* — here, how much liquidity buffer is "safe" — is precisely the judgment call only you can make.
+
+## What gets persisted
+
+Every council turn writes to three places:
+
+1. **Session DB** — the full transcript, indexed for `/search`. Stored in `~/.prevail/sessions/`.
+2. **`<domain>/_log/YYYY-MM-DD.md`** — a one-line summary with the verdict, the framework, the call count, and a `disagreed:` marker. A `.shasum` sibling records an integrity hash per entry.
+3. **`<domain>/_journal/`** — distilled decisions and facts, so durable conclusions outlive any single conversation.
+
+A logged council entry looks like:
+
+```markdown
+### (14:32) ◆ council-verdict · BLUF ● ON · 4 calls · 2.8k↑ 1.2k↓ · ~$0.02
+
+**You:** should I sell or rent?
+
+**Verdict:** Rent IF (a) appreciation likely, (b) landlord cost contained. Sell for migration or cap-gains harvest.
+
+▸ disagreed: Claude (rent), Codex (sell), Antigravity (rent), Ollama (rent)
+```
+
+→ [Logs & journal](/vault/logs-journal/)
+
+## Trust boundaries
+
+Panelist replies are **untrusted input**. Before the chair sees them, Prevail sanitizes each one so a panelist can't inject a fake `## Verdict` heading and hijack the synthesis. The journal distiller is likewise a strict parser that silently drops anything outside its expected shape. See [Security & threat model](/reference/security/).
+
+Next: [Vault structure →](/vault/structure/)

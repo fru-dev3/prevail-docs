@@ -1,0 +1,78 @@
+---
+title: Syncing your vault
+description: Because the vault is plain files, sync it however you like — git, iCloud, Dropbox, Tailscale. The one rule — never sync ~/.prevail, which holds your secrets.
+sidebar:
+  order: 5
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Your vault is just a folder of text, so syncing it across machines is whatever file-sync you already trust. There's exactly one rule to remember.
+
+<Aside type="caution" title="The one rule">
+Sync `<vault>/` **only**. **Never** sync `~/.prevail/`.
+
+`~/.prevail/` contains Telegram bot tokens, OAuth refresh tokens, your MCP bearer token, and the session database. Those are machine-local secrets. Syncing them would copy your credentials to every device and into your sync provider's storage.
+</Aside>
+
+## Pick a mechanism
+
+<Tabs>
+  <TabItem label="git">
+    The most powerful option — you get versioned history of every decision.
+
+    ```bash
+    cd ~/life-vault
+    git init
+    git add .
+    git commit -m "vault snapshot"
+    git remote add origin git@github.com:you/life-vault-private.git
+    git push -u origin main
+    ```
+
+    Use a **private** repo. Your vault is your life. Commit on a cron or whenever you like; `git log` becomes a literal timeline of your thinking.
+  </TabItem>
+
+  <TabItem label="iCloud / Dropbox">
+    Put the vault inside your synced folder and point Prevail at it:
+
+    ```bash
+    mv ~/life-vault ~/Library/Mobile\ Documents/com~apple~CloudDocs/life-vault
+    prevail init     # re-point the vault path
+    ```
+
+    Sync is automatic and invisible. No conflict resolution beyond what the provider gives you.
+  </TabItem>
+
+  <TabItem label="Tailscale">
+    Keep the vault on one machine (a Mac mini, say) as the source of truth and reach it from your laptop over your tailnet — for example via a symlink to a Tailscale-mounted path, so both machines read and write the same files with zero copy step.
+  </TabItem>
+</Tabs>
+
+## Two-machine setups
+
+A common pattern: a **source-of-truth** machine holds the real files, and a **development/daily** machine symlinks to them over Tailscale. Both read and write the same vault, so there's nothing to reconcile. Prevail doesn't care how the files got there — it just reads the folder you point it at.
+
+The same applies to running the [Telegram daemon](/advanced/telegram/): run it on the always-on machine that holds the vault, and it has everything it needs.
+
+## What not to commit
+
+If you're using git, your vault may accumulate things you don't want in history. A starter `.gitignore`:
+
+```text
+# never — these live in ~/.prevail, but guard against symlinks/copies
+.prevail/
+**/telegram.json
+**/*.token
+
+# large opaque docs you'd rather not version
+**/00_current/*.pdf
+```
+
+Adjust to taste — some people *want* their PDFs versioned, some don't.
+
+## Conflicts
+
+Because everything is append-mostly markdown, conflicts are rare and human-readable when they happen. The `_log/` files are per-day and append-only, which minimizes collisions even across machines. If two devices write the same `state.md` at once, you resolve it the way you'd resolve any text conflict — in your editor.
+
+Next: [Connector overview →](/connectors/overview/)

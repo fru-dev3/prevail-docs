@@ -1,0 +1,93 @@
+---
+title: Domains
+description: A domain is one area of your life as a folder of markdown. Learn the standard domains Prevail ships, the files inside each one, and how to add your own.
+sidebar:
+  order: 2
+---
+
+import { FileTree, Aside } from '@astrojs/starlight/components';
+
+A **domain** is one area of your life, represented as a folder of markdown. `wealth`, `health`, `tax`, `vision` — each is self-contained, remembers its own settings, and keeps its own log.
+
+Any folder containing a `state.md` is a domain. Prevail discovers them automatically.
+
+## The standard domains
+
+Prevail's demo vault ships ~20 domains, displayed in a deliberate priority order:
+
+| Domain | What it's for |
+|---|---|
+| `chief` | Chief of staff — daily brief and cross-domain triage |
+| `council` | Meta-domain for cross-agent coordination |
+| `vision` | Long-horizon goals and retrospectives |
+| `wealth` | Money, investments, real estate, net worth |
+| `health` | Body, fitness, medical |
+| `tax` | Compliance, filings, deadlines |
+| `calendar` | Time blocks and recurring events |
+| `career` | Primary income, job decisions |
+| `business` | Side ventures and LLCs |
+| `estate` | Real-estate operations |
+| `real-estate` | Real-estate documents (deeds, leases) |
+| `insurance` | Risk management — life, home, umbrella, health |
+| `benefits` | Comp, 401k, HSA, FSA |
+| `brand` | Personal brand and content strategy |
+| `content` | Content production |
+| `social` | Relationships and networks |
+| `home` | Household management |
+| `learning` | Skill-building and courses |
+| `explore` | Opportunities and diligence |
+| `intel` | Information gathering |
+| `records` | Archive and historical documents |
+
+Use what's useful, delete what isn't, add your own.
+
+## Inside a domain
+
+<FileTree>
+
+- wealth/
+  - state.md  current snapshot — you edit this
+  - open-loops.md  append-only list of pending items
+  - QUICKSTART.md  60-second orientation
+  - PROMPTS.md  curated questions worth revisiting
+  - config.md  durable facts — account IDs, contacts, cadences
+  - 00_current/  documents you're working on now
+  - 01_prior/  archive of previously-current documents
+  - 02_briefs/  generated brief reports (written by skills)
+  - skills/  the domain's reusable skills
+  - _log/  auto-written, one file per day
+  - _journal/  auto-distilled decisions & facts
+
+</FileTree>
+
+### What each file is for
+
+| File | Purpose | Edited by |
+|---|---|---|
+| `state.md` | Current state: key numbers, recent decisions, an Open Items checklist | You (agents may update Open Items) |
+| `open-loops.md` | Append-only log of pending items | Agents, on request |
+| `QUICKSTART.md` | A newcomer's 60-second orientation to this domain | You |
+| `PROMPTS.md` | Questions you've asked or want to revisit | You |
+| `config.md` | Durable identifiers — account numbers, contact names, frequencies | You |
+| `00_current/` | Active working documents (PDFs, notes, exports) | You + agents |
+| `01_prior/` | Archived documents | Agents, on request |
+| `02_briefs/` | Generated summaries and reviews | Agents (skills) |
+| `_log/*.md` | Per-day chat summaries | Agents, every turn |
+| `_journal/` | Distilled `decisions.md` and `facts.md` | Agents (`/distill`) |
+
+The folders matter to *you*; the markdown files matter to *agents*. When you open a domain, Prevail reads `state.md`, `config.md`, and the recent log as context — so the model starts every conversation already knowing where you are.
+
+## Adding a domain
+
+Two ways:
+
+- **In the cockpit:** press `n` and Prevail scaffolds a new domain folder for you.
+- **By hand:** `mkdir ~/life-vault/sabbatical` and drop in a `state.md`. Press `r` in the cockpit to rescan and it appears in the sidebar.
+
+A minimal domain is just a folder with a `state.md`. Everything else is created as you use it.
+
+<Aside type="tip">
+Per-domain settings persist independently. Set `wealth` to the `BLUF` framework and a full council, set `health` to an Ollama-only council with the `first-principles` lens — neither affects the other.
+</Aside>
+
+Next: [Skills →](/vault/skills/)

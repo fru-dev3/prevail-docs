@@ -1,0 +1,73 @@
+---
+title: Prevail Desktop
+description: The native macOS cockpit for AI council deliberation — same vault format, same benchmark, no terminal required. Built with Tauri 2, React 19, and Tailwind.
+sidebar:
+  order: 1
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+**Prevail Desktop** is the native macOS companion to the CLI — the same vault, the same council, the same canonical benchmark, with a graphical interface and no terminal required. It's built with Tauri 2, React 19, and Tailwind.
+
+<Aside type="note">
+The desktop app and the CLI read the **same vault format**. Use the CLI on one machine and the desktop app on another against the same synced vault — they're two front-ends over one set of files.
+</Aside>
+
+## What it does
+
+| Panel | What it gives you |
+|---|---|
+| **Vault picker** | Point at any folder; child folders with a `state.md` become domains |
+| **Domain sidebar** | Every domain in the chosen vault |
+| **Chat panel** | Send a prompt to one installed CLI (Claude / Codex / Antigravity / Ollama) and stream the reply live |
+| **Council panel** | Fan one question to every available CLI in parallel, then auto-synthesize a verdict with the chair you pick |
+| **Benchmark viewer** | Read every scored run from `<vault>/benchmark/runs/`, see the leaderboard, and click any row to drill into per-question prompts, replies, keyword hits, and judge rationale |
+
+It spawns your existing `claude` / `codex` / `agy` / `ollama` CLIs as subprocesses — it brings no API keys of its own, exactly like the CLI.
+
+## Install
+
+<Steps>
+
+1. Download the latest `.dmg` from the [desktop releases page](https://github.com/fru-dev3/prevail-desktop/releases).
+
+2. Drag **Prevail.app** to `/Applications`.
+
+3. On first launch, right-click the app → **Open**, then confirm. (Early builds are unsigned; macOS remembers your choice after the first open. Signing and notarization are on the roadmap.)
+
+</Steps>
+
+## Requirements
+
+- macOS 13 or later.
+- One or more of `claude`, `codex`, `agy`, `ollama` installed and on your `$PATH` — the app spawns them directly.
+- An existing vault, or the [demo vault](https://github.com/fru-dev3/prevail/tree/main/vault-demo).
+
+## Desktop vs CLI
+
+The desktop app is a focused MVP that proves the pattern in a GUI. Some things deliberately stay in the CLI for now:
+
+| Feature | CLI | Desktop |
+|---|---|---|
+| Chat with one CLI | ✅ | ✅ |
+| Council + chair-synthesized verdict | ✅ | ✅ |
+| Benchmark viewer & leaderboard | ✅ | ✅ |
+| Vault picker / domain sidebar | ✅ | ✅ |
+| Frameworks, lenses, web toggle | ✅ | — |
+| Skills, `/distill` | ✅ | — |
+| Scheduled briefings | ✅ | — |
+| Telegram bridge | ✅ | — |
+| MCP server | ✅ | — |
+| Connectors | ✅ | — |
+
+If you want the full surface — frameworks, lenses, briefings, Telegram, connectors, the MCP server — use the [CLI](/start/installation/). The desktop app focuses on the core loop: pick a vault, ask the council, read the verdict, study the benchmark.
+
+## How it's built
+
+- **Frontend:** Vite + React 19 + Tailwind, with framer-motion and lucide-react.
+- **Backend:** Tauri 2 (Rust) — `tauri-plugin-shell` to spawn the CLIs, `tauri-plugin-dialog` for the folder picker, `tauri-plugin-fs` to read `state.md` and benchmark JSON.
+- **Streaming:** Rust spawns the CLI, captures stdout in chunks, and emits them as Tauri events; the React UI updates per chunk so replies stream live.
+
+No sidecar binary, no bundled prevail, no daemon — it calls the CLIs already on your `PATH`.
+
+Next: [CLI command reference →](/reference/cli/)

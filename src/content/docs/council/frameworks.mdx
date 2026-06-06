@@ -1,0 +1,47 @@
+---
+title: Frameworks
+description: Frameworks shape how an answer is structured — BLUF, WIN, SCQA, SBAR, OODA, pros/cons, and steelman. One click rewrites the next reply in that shape.
+sidebar:
+  order: 2
+---
+
+A **framework** controls *how the answer is structured*. It doesn't change what the model thinks — it changes the shape it has to deliver it in. One click in the [ConfigBar](/cockpit/configbar/), or `/framework <id>`, and the next reply is rewritten to fit.
+
+Frameworks are set per domain, so `wealth` can default to `BLUF` while `tax` defaults to `SCQA`.
+
+## Built-in frameworks
+
+| ID | Name | Best for |
+|---|---|---|
+| `bluf` | **Bottom Line Up Front** | Decisions you want answered in the first sentence |
+| `win` | **What's Important Now** | Triage — what to act on this week |
+| `scqa` | **Situation · Complication · Question · Answer** | Framing a messy problem before solving it |
+| `sbar` | **Situation · Background · Assessment · Recommendation** | Handing a situation to someone else (or future you) |
+| `ooda` | **Observe · Orient · Decide · Act** | Fast-moving situations that need a loop, not a memo |
+| `proscons` | **Pros & Cons** | Two-option choices where you want the tradeoffs laid flat |
+| `steelman` | **Steelman** | Stress-testing — argue the strongest case for the side you don't favor |
+
+## Using one
+
+```text
+/framework bluf       structure the next answer as Bottom Line Up Front
+/fw scqa              short alias
+```
+
+Or click the **Framework** chip in the ConfigBar to cycle through them.
+
+## How it works
+
+Each framework is a tiny prompt instruction prepended to every CLI call in the turn. When the council is on, **every panelist** answers in the chosen framework, and the chair's verdict inherits it too — so the whole panel speaks the same structure.
+
+The instructions are deliberately terse. Codex and some other CLIs echo long preambles verbatim, so frameworks are written as short directives rather than essays.
+
+:::tip
+Framework and **Lens** are independent dials. A framework changes *structure* (BLUF vs SCQA); a [lens](/council/lenses/) changes *perspective* (first-principles vs contrarian). Combine them: a `contrarian` answer delivered as `pros/cons`.
+:::
+
+## Adding your own
+
+Frameworks live in `src/framework.ts`. Each is an object with an `id`, a short `label` for the chip, a one-line `blurb`, and a terse `instruction`. See [Extending Prevail](/reference/extending/#add-a-framework).
+
+Next: [Lenses →](/council/lenses/)

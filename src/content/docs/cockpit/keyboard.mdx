@@ -1,0 +1,49 @@
+---
+title: Keyboard shortcuts
+description: Every key the Prevail cockpit responds to — navigation, editing, scaffolding, and quitting.
+sidebar:
+  order: 2
+---
+
+Prevail is keyboard-first. These are the global shortcuts inside the cockpit.
+
+## Navigation
+
+| Key | Action |
+|---|---|
+| `↑` / `↓` | Move between domains (or apps, depending on focus) |
+| `s` | Swap focus between the **domains** list and the **apps** list |
+| `/` | Start typing a [slash command](/cockpit/slash-commands/) |
+
+## Working in a domain
+
+| Key | Action |
+|---|---|
+| `e` | Edit the active markdown tab (`state` / `quick start` / `prompts` / `skills`) in `$EDITOR` |
+| `n` | Scaffold a brand-new domain folder |
+| `r` | Rescan the vault — pick up files you changed outside Prevail, and re-probe CLIs |
+
+## Session
+
+| Key | Action |
+|---|---|
+| `q` | Quit the cockpit |
+| `Ctrl-C` | Quit (also aborts an in-flight turn) |
+
+## In the chat input
+
+| Key | Action |
+|---|---|
+| `/` (at start of line) | Open slash-command autocomplete |
+| `Enter` | Send |
+| `↑` / `↓` (with the autocomplete open) | Cycle command suggestions |
+
+:::tip
+`$EDITOR` is whatever your shell exports — `vim`, `nano`, `code -w`, `hx`, etc. Set it in your shell profile (`export EDITOR="code -w"`) so `e` opens your editor of choice.
+:::
+
+## Discover everything
+
+Inside the chat pane, `/help` lists every available slash command with a one-line description — the fastest reference while you're learning.
+
+Next: [Slash commands →](/cockpit/slash-commands/)

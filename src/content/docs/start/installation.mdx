@@ -1,0 +1,142 @@
+---
+title: Installation
+description: Install Prevail in 30 seconds with curl | bash, via Homebrew, or build from source with Bun. macOS and Linux supported; Windows via WSL.
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem, Steps, Aside } from '@astrojs/starlight/components';
+
+Prevail ships as a single self-contained binary. Pick the method you like.
+
+## Install
+
+<Tabs syncKey="install">
+  <TabItem label="curl | bash">
+    ```bash
+    curl -fsSL https://prevail.sh/install | bash
+    ```
+
+    The installer detects your platform, downloads the matching binary from the
+    latest GitHub release, and places it on your `PATH` (typically
+    `~/.local/bin/prevail`). Then just run:
+
+    ```bash
+    prevail
+    ```
+  </TabItem>
+
+  <TabItem label="Homebrew">
+    ```bash
+    brew tap fru-dev3/prevail
+    brew install prevail
+    ```
+
+    Upgrades come through `brew upgrade prevail` like any other formula.
+  </TabItem>
+
+  <TabItem label="From source">
+    Requires [Bun](https://bun.sh) ≥ 1.3.
+
+    ```bash
+    git clone https://github.com/fru-dev3/prevail
+    cd prevail
+    bun install
+    bun run build        # compiles dist/prevail
+    ./dist/prevail
+    ```
+
+    Or run straight from source without compiling:
+
+    ```bash
+    bun run start        # equivalent to `prevail`
+    bun run demo         # boot the synthetic demo vault
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+The binary is also published as `aru` (the project's former name). Both names point to the same program — use whichever you prefer.
+</Aside>
+
+## First launch
+
+<Steps>
+
+1. **Run `prevail`.** The first launch starts a ~30-second wizard (you can re-run it any time with `prevail init`).
+
+2. **Pick a vault.** Choose the bundled demo vault — synthetic, safe to explore — or point Prevail at your own folder. You can always switch later.
+
+3. **Let it probe your CLIs.** Prevail auto-detects which of `claude`, `codex`, `agy`, and `ollama` are installed and logged in, and shows their status in the cockpit.
+
+4. **Ask something.** Type a question, or `/council <question>` to fan it out to every available engine at once.
+
+</Steps>
+
+Want to look around with zero risk first?
+
+```bash
+prevail demo
+```
+
+This boots the synthetic **"Alex Rivera"** vault — 20+ fully-populated life domains, sample skills, logs, and benchmark questions — with no real personal data. It's the fastest way to understand the cockpit before pointing it at your own life.
+
+## Verify your install
+
+```bash
+prevail doctor
+```
+
+`doctor` checks that your vault is well-formed and reports which AI CLIs it can see, with versions. Add `--debug` to also dump the tail of `~/.prevail/debug.log`:
+
+```bash
+prevail doctor --debug
+```
+
+## Upgrading
+
+<Tabs syncKey="install">
+  <TabItem label="curl | bash">
+    ```bash
+    prevail upgrade            # self-update from the latest GitHub release
+    prevail upgrade --check    # just report whether an update exists
+    prevail upgrade --pre      # include prereleases
+    ```
+  </TabItem>
+  <TabItem label="Homebrew">
+    ```bash
+    brew upgrade prevail
+    ```
+  </TabItem>
+  <TabItem label="From source">
+    ```bash
+    cd prevail && git pull && bun install && bun run build
+    ```
+  </TabItem>
+</Tabs>
+
+## Platform support
+
+| Platform | Status |
+|---|---|
+| macOS arm64 (Apple Silicon) | ✅ Native binary |
+| macOS x86_64 (Intel) | ✅ Native binary |
+| Linux x86_64 | ✅ Native binary |
+| Linux arm64 | ✅ Native binary |
+| Windows | ⚠️ Via WSL only |
+
+A terminal with UTF-8 and true color is required. Prevail is tested on iTerm2, kitty, alacritty, WezTerm, Ghostty, and GNOME Terminal, and should work in any modern `xterm-256color` terminal. See [Platform support](/reference/platform/) for details on the Windows situation.
+
+## What gets installed where
+
+| Path | What it holds |
+|---|---|
+| `~/.local/bin/prevail` (or Homebrew prefix) | The binary |
+| `~/.prevail/` | Machine-local state: config, secrets, connector auth, session DB |
+| `<your vault>/` | Your domains, logs, journals — the part you sync |
+
+<Aside type="caution" title="Keep secrets out of sync">
+`~/.prevail/` contains secrets (Telegram tokens, OAuth refresh tokens) and machine-local state. If you sync your vault folder, sync `<vault>/` **only** and **exclude `~/.prevail/`**. See [Syncing your vault](/vault/sync/).
+</Aside>
+
+Next: [Quickstart →](/start/quickstart/)

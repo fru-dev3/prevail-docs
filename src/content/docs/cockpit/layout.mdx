@@ -1,0 +1,84 @@
+---
+title: Layout & navigation
+description: A tour of the Prevail cockpit — the domain and app sidebars, the per-domain tab strip, the workspace, and the responsive layout tiers.
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **cockpit** is the TUI you spend your time in. It has three zones: a sidebar on the left, a workspace on the right, and the ConfigBar along the bottom.
+
+```
+┌─ prevAIl ─────────────────────────────────────────────────────────────────┐
+│  domains            │  [chat] · state · quick start · prompts · skills    │
+│  ───────────────    │  ───────────────────────────────────────────────    │
+│  ▸ wealth      ●    │                                                     │
+│    health      ·    │   council  ● ON       framework  ◆ BLUF             │
+│    tax         ·    │   vault    ▸ open     ◇ configure                   │
+│    career      ·    │                                                     │
+│    chief       ·    │  ─ chat ──────────────────────────────────────────  │
+│    vision      ·    │   you › what's new in tax this quarter?             │
+│                     │   ai  › Three deltas worth pulling forward …       │
+│  apps  [s]          │                                                     │
+│  ───────────────    │   ▸ tools     ◆ Council ON     ◇ configure         │
+│    1password   ✓    │                                                     │
+│    plaid       ✓    │  ─ ConfigBar ─────────────────────────────────────  │
+│    youtube     !    │  Council·Framework·Lens·Web·Save·Serendipity·Auto   │
+└─────────────────────┴─────────────────────────────────────────────────────┘
+```
+
+## The sidebar
+
+The left column holds two stacked lists:
+
+- **Domains** — every life domain in your vault (`wealth`, `health`, `tax`, …). The marker on the right shows activity (`●` active / `·` idle).
+- **Apps** — every connector below the domains, each with a live auth status: `✓` connected, `!` needs attention, `·` not configured.
+
+Move within a list with `↑` / `↓`. Press **`s`** to swap focus between the two lists.
+
+→ [Domains](/vault/domains/) · [Connectors](/connectors/overview/)
+
+## The tab strip
+
+Every domain has the same five tabs, so the interface is identical everywhere:
+
+| Tab | What it shows |
+|---|---|
+| **chat** | The default landing — your conversation with the council or a single CLI. |
+| **state** | The live snapshot from the domain's `state.md`. |
+| **quick start** | The domain's `QUICKSTART.md` — a 60-second orientation. Editable. |
+| **prompts** | The domain's `PROMPTS.md` — curated questions worth revisiting. Editable. |
+| **skills** | The skills the chair can call in this domain. Toggle which are active. |
+
+Press **`e`** to open the active markdown tab in your `$EDITOR`.
+
+## The tools panel
+
+The `▸ tools` panel (reachable from the workspace) surfaces the things you reach for occasionally rather than every turn:
+
+- The MCP server snippet to paste into another agent.
+- Telegram setup and the briefings list.
+- Calibration and benchmarks.
+- Clickable paths straight to your vault folder and config file.
+
+## Status badges
+
+The header and footer carry live badges for each engine:
+
+<span class="cli-claude">claude ✓</span> &nbsp; <span class="cli-codex">codex ✓</span> &nbsp; <span class="cli-antigravity">gemini ·</span> &nbsp; <span class="cli-ollama">ollama ✓</span>
+
+A check means the CLI is installed and logged in; a dot means it wasn't detected. Prevail probes these on boot — install or log into another one and press `r` to rescan.
+
+## Responsive layout
+
+The cockpit adapts to your terminal size:
+
+- **Wide** (≥100 columns and ≥28 rows): full 9-row ASCII `PREVAIL` banner, a status column, and the complete sidebar.
+- **Compact** (anything smaller): a 3-row banner and a condensed sidebar — tuned for a 13″ MacBook Pro at fullscreen, or a split pane.
+
+<Aside type="note">
+Prevail requires a UTF-8, true-color terminal. If the banner or chips look broken, your terminal is probably not in `xterm-256color` mode. See [Platform support](/reference/platform/).
+</Aside>
+
+Next: [Keyboard shortcuts →](/cockpit/keyboard/)

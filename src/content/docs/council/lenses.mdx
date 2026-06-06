@@ -1,0 +1,63 @@
+---
+title: Lenses
+description: Lenses shape the perspective an answer is reasoned from — first principles, contrarian, outsider, executor, and more. Set lens to "all" and the council multiplies.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Where a [framework](/council/frameworks/) changes the *structure* of an answer, a **lens** changes the *perspective* it's reasoned from. Same question, deliberately different angle of attack.
+
+## Built-in lenses
+
+| ID | Lens | The angle |
+|---|---|---|
+| `first-principles` | **First principles** | Break the problem down to root assumptions and rebuild |
+| `outsider` | **Outsider** | An external point of view, immune to your in-group's groupthink |
+| `contrarian` | **Contrarian** | Argue the opposite of the obvious answer |
+| `expansionist` | **Expansionist** | What if you went bigger — more ambitious, more scope? |
+| `executor` | **Executor** | Operational focus — what it takes to actually ship this in the real world |
+| `alien` | **Alien** | A completely novel angle, unconstrained by convention |
+| `mom` | **Mom** | The home-and-family perspective |
+| `dad` | **Dad** | The practical-economics perspective |
+
+## Using one
+
+Set the lens for a domain and it sticks. The single most powerful move:
+
+```text
+lens = all
+```
+
+When the lens is set to **all**, the council *multiplies*: every panelist answers through every lens. Four panelists × eight lenses is up to 32 distinct reasoning passes on one question, then the chair synthesizes across all of them.
+
+```
+            first-principles   contrarian   executor   …   (8 lenses)
+  claude          ●               ●            ●
+  codex           ●               ●            ●
+  agy             ●               ●            ●
+  ollama          ●               ●            ●
+                              ▼
+                    chair synthesizes one verdict
+```
+
+<Aside type="caution" title="Mind the call count">
+`lens=all` with a full council is the most expensive thing Prevail does. It's capped by `councilMaxCallsPerTurn` (default 16), and Prevail previews the call count and estimated cost before firing. Raise or lower the cap in your [config](/reference/configuration/).
+</Aside>
+
+## Frameworks vs lenses
+
+| | Framework | Lens |
+|---|---|---|
+| Changes | **How** the answer is structured | **Which** perspective it comes from |
+| Examples | BLUF, SCQA, OODA | first-principles, contrarian, mom |
+| Multiplies the council? | No | Yes, when set to `all` |
+
+They're orthogonal — combine freely.
+
+## Adding your own
+
+Lenses live in `src/lens.ts`, with the same shape as frameworks (`id`, `label`, `blurb`, `instruction`). See [Extending Prevail](/reference/extending/#add-a-lens).
+
+Next: [Chair, verdicts & divergence →](/council/verdicts/)

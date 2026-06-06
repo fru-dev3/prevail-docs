@@ -1,0 +1,65 @@
+---
+title: Prevail
+description: A terminal cockpit that runs Claude, Codex, Antigravity, and Ollama in parallel as a council — and a chair model writes the verdict. Local-first, markdown-native, free and open source.
+template: splash
+hero:
+  tagline: One question. Four engines. One verdict. A terminal cockpit for the rest of your life.
+  image:
+    file: ../../assets/logo.png
+  actions:
+    - text: Get started
+      link: /start/introduction/
+      icon: right-arrow
+      variant: primary
+    - text: Install in 30 seconds
+      link: /start/installation/
+      icon: rocket
+      variant: secondary
+    - text: View on GitHub
+      link: https://github.com/fru-dev3/prevail
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+**Every part of your life — wealth, health, tax, career — is a folder of markdown.** Open one, ask a question, and Prevail fans it out to every AI CLI you already have logged in. A chair model reads all the replies and writes one decisive answer, with a dedicated panel surfacing the _disagreement_ — which is the point.
+
+Works from your terminal or your phone. Single binary. No daemon, no Docker, no API keys to manage.
+
+```bash
+curl -fsSL https://prevail.sh/install | bash
+prevail demo
+```
+
+<CardGrid stagger>
+  <Card title="A council, not a single voice" icon="comment-alt">
+    Four models answer in parallel. One chair synthesizes. Disagreement gets its own panel — that's where the value is.
+  </Card>
+  <Card title="Domain = folder" icon="open-book">
+    `wealth/`, `health/`, `tax/`. Plain markdown. Edit anywhere. Sync with git, iCloud, or Tailscale. No database.
+  </Card>
+  <Card title="Uses CLIs you already pay for" icon="seti:powershell">
+    Spawns `claude`, `codex`, `agy`, `ollama` — inherits every login, MCP server, and skill. No API keys to wire up.
+  </Card>
+  <Card title="Local-private when it matters" icon="approve-check">
+    Ollama auto-detected at `localhost:11434`. Run health or wealth on a council that never leaves your machine.
+  </Card>
+  <Card title="Off the keyboard" icon="phone">
+    A Telegram bridge puts the same cockpit, the same council, on your phone — with a mandatory chat-ID allowlist.
+  </Card>
+  <Card title="Hardened by default" icon="shield">
+    Env-scrubbed subprocesses, prompt-injection–aware operating manual, OAuth tokens at `chmod 0600`.
+  </Card>
+</CardGrid>
+
+## Where to next
+
+<CardGrid>
+  <LinkCard title="What is Prevail?" href="/start/introduction/" description="The idea behind the council, the vault, and the cockpit." />
+  <LinkCard title="Install it" href="/start/installation/" description="curl | bash, Homebrew, or build from source." />
+  <LinkCard title="Quickstart" href="/start/quickstart/" description="From zero to your first verdict in 30 seconds." />
+  <LinkCard title="The council" href="/council/overview/" description="How four engines and a chair produce one answer." />
+  <LinkCard title="The vault" href="/vault/structure/" description="Your life as a folder of markdown you fully own." />
+  <LinkCard title="Desktop app" href="/desktop/overview/" description="The native macOS cockpit — no terminal required." />
+</CardGrid>

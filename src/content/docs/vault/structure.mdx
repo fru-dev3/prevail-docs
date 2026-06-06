@@ -1,0 +1,82 @@
+---
+title: Vault structure
+description: The vault is a plain folder of markdown — domains, benchmark questions, and schedule state — plus a separate machine-local directory for secrets and caches.
+sidebar:
+  order: 1
+---
+
+import { FileTree, Aside } from '@astrojs/starlight/components';
+
+Your **vault** is a folder. Everything in it is plain text you can read, edit, grep, version, and sync. There is no database and no binary blob format — that's the design.
+
+## The two halves
+
+Prevail keeps a hard line between **your data** (the vault) and **machine-local state** (secrets, caches, the session DB).
+
+| | Location | Synced? |
+|---|---|---|
+| **Vault** | Wherever you chose (e.g. `~/life-vault/`) | Yes — sync this |
+| **Machine-local** | `~/.prevail/` | **No — never sync this** |
+
+<Aside type="caution">
+`~/.prevail/` holds Telegram tokens, OAuth refresh tokens, and your session database. If you sync your vault with git/iCloud/Tailscale, sync `<vault>/` **only** and exclude `~/.prevail/`. See [Syncing your vault](/vault/sync/).
+</Aside>
+
+## Inside the vault
+
+<FileTree>
+
+- AGENTS-operating.md  the operating manual agents read (override here)
+- wealth/  a domain
+  - state.md
+  - QUICKSTART.md
+  - PROMPTS.md
+  - config.md
+  - 00_current/
+  - 01_prior/
+  - 02_briefs/
+  - skills/
+  - _log/
+  - _journal/
+- health/  another domain
+- tax/
+- benchmark/  the canonical test suite
+  - README.md
+  - questions/
+  - attachments/
+  - runs/
+- .schedule.json  cron-style recurring commands
+- .briefings.json  scheduled domain briefings
+
+</FileTree>
+
+- **Domains** are the bulk of it — one folder per area of your life. → [Domains](/vault/domains/)
+- **`benchmark/`** holds the canonical question suite and run results. → [Benchmarks](/benchmarks/overview/)
+- **`AGENTS-operating.md`** is the operating manual prepended to agent calls. Edit it to change how agents treat your vault.
+- **`.schedule.json` / `.briefings.json`** persist your scheduled work. → [Briefings](/advanced/briefings/)
+
+## Inside `~/.prevail/`
+
+<FileTree>
+
+- config.json  vault path, per-domain settings, chair pin
+- telegram.json  bot token + chat-ID allowlist (chmod 0600)
+- mcp.json  auto-generated MCP bearer token
+- debug.log  diagnostics (tail with `prevail doctor --debug`)
+- sessions/  SQLite chat history (FTS5 search index)
+- connectors/  per-connector auth + synced data
+- apps/  community connector definitions
+
+</FileTree>
+
+This directory is created on first run and managed by Prevail. You rarely touch it directly — `prevail doctor` reads it for you.
+
+## Why plain markdown
+
+- **You own it.** No export step, no lock-in. It's already files.
+- **Edit anywhere.** Obsidian, VS Code, vim, the cockpit's `e` key — they all work because it's just text.
+- **Grep-able.** `grep -r "mortgage" ~/life-vault/` does what you'd hope.
+- **Diffable.** `git log` on your vault is a literal history of your decisions.
+- **Sync-agnostic.** iCloud, Dropbox, git, Tailscale Drive — anything that moves files moves your vault.
+
+Next: [Domains →](/vault/domains/)

@@ -1,0 +1,71 @@
+---
+title: The canonical benchmark
+description: Prevail ships a 21-question benchmark across 8 capability dimensions, so you can grade every new model and council configuration against decisions that actually matter to you.
+sidebar:
+  order: 1
+---
+
+New models ship constantly. The question that matters isn't "what's the leaderboard say?" — it's "which one is better at *my* decisions?" Prevail's **canonical benchmark** answers that with a fixed question suite you run against any CLI, model, or council configuration.
+
+## What's in it
+
+The bundled suite is **21 questions across 8 capability dimensions** — the kinds of reasoning personal decisions actually demand:
+
+| Dimension | What it probes |
+|---|---|
+| Document analysis | Reading a P&L, a lab panel, or a contract and pulling the signal |
+| Recency | Whether the model knows about recent changes, or bluffs past its cutoff |
+| Cultural literacy | Nuance around family, obligation, and context |
+| Brevity | Whether it can answer in one disciplined sentence when asked |
+| Bias resistance | Rejecting an anchored or leading frame |
+| Insufficient-info recognition | Refusing to recommend when it lacks the facts |
+| Tax traps | Catching rules that trip up most models (e.g. passive-loss exceptions) |
+| Decision discipline | Committing to a recommendation under uncertainty |
+
+Some questions are deliberately adversarial — the passive-loss trap, for instance, is one that the majority of LLMs answer wrong.
+
+## How a benchmark question looks
+
+Each question is a markdown file with the prompt, an expected decision, and scoring hints:
+
+```markdown
+---
+id: tax-passive-loss-trap
+domain: tax
+dimension: tax-traps
+expected_verdict_keywords: ["material participation", "§469", "cannot deduct"]
+---
+
+## Question
+I have a $40k passive loss from a rental K-1 and $200k of W-2 wages.
+Can I deduct the loss against my wages this year?
+
+## Expected decision
+No — passive losses can't offset active income unless you materially
+participate or qualify as a real-estate professional. The loss carries forward.
+```
+
+Questions can carry **attachments** (a P&L statement, a lab panel, a contract draft) that get inlined into the prompt up to a per-question character budget, so the model is reasoning over realistic source material rather than a toy summary.
+
+## Where it lives
+
+```
+<vault>/benchmark/
+├── README.md             the capability matrix + instructions
+├── questions/            canonical questions, grouped by domain
+├── attachments/          source documents inlined into prompts
+└── runs/                 results, one folder per (date, cli, model)
+```
+
+## Your own questions
+
+The bundled suite is a starting point. The real value is grading models against *your* recurring decisions:
+
+```bash
+prevail bench seed --domain wealth          write a stub question to fill in
+prevail bench seed --from-log wealth        turn a recent council verdict into a draft question
+```
+
+`--from-log` is the clever one: take a verdict you trust, freeze it as ground truth, and now every future model gets graded on whether it reaches the same conclusion.
+
+Next: [Running & scoring →](/benchmarks/running/)

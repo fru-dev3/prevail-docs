@@ -1,0 +1,79 @@
+---
+title: Using connectors
+description: List, test, authenticate, and run connectors from the shell or the cockpit — including the OAuth flow and invoking individual connector skills.
+sidebar:
+  order: 2
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+Connectors are driven from the shell with `prevail connectors …` or from the cockpit with `/connectors`.
+
+## List what's available
+
+```bash
+prevail connectors list
+```
+
+Shows every connector, its auth type, and whether it's currently authenticated. In the cockpit, the apps sidebar shows the same status inline: `✓` connected, `!` needs attention, `·` not configured.
+
+## Test a connection
+
+```bash
+prevail connectors test plaid
+```
+
+Probes the connector's auth without doing real work — checks that an API key is present, a refresh token is valid, or a browser session is still live. `prevail connectors probe <id>` is the same thing.
+
+## Authenticate
+
+<Steps>
+
+1. **API-key connectors** read from your environment or `auth/` folder. Set the documented variable (e.g. `PLAID_CLIENT_ID`) and `test` will go green.
+
+2. **OAuth connectors** need a one-time browser flow:
+
+   ```bash
+   prevail connectors oauth youtube-analytics
+   ```
+
+   Prevail opens the consent page, listens on a loopback port for the callback, exchanges the code, and stores the refresh token at `chmod 0600`. From then on it refreshes the access token automatically.
+
+3. **Browser connectors** capture a session by driving the real site once with Playwright; re-run the auth if the session goes stale.
+
+4. **Manual connectors** just need you to drop exported files into the connector's watched folder.
+
+</Steps>
+
+In the cockpit, the same flows are available as `/connectors oauth <id>` and `/connectors test <id>`.
+
+## See what a connector can do
+
+```bash
+prevail connectors skills plaid
+```
+
+Lists the runnable **skills** a connector exposes — discrete actions like `sync-transactions`, `get-balance`, or `list-institutions`.
+
+## Run a connector skill
+
+```bash
+prevail connectors run plaid sync-transactions
+prevail connectors run plaid sync-transactions --input institution=chase --input months=3
+```
+
+Pass parameters with repeated `--input key=value` flags. The skill does its work — syncing data into `~/.prevail/connectors/<id>/data/` — and logs the run under the connector's `_log/`.
+
+## A typical first run
+
+```bash
+prevail connectors list                       # what's here?
+prevail connectors oauth google-calendar      # authenticate
+prevail connectors test google-calendar       # confirm it's green
+prevail connectors skills google-calendar     # what can it do?
+prevail connectors run google-calendar sync   # pull events in
+```
+
+Now open the `calendar` domain in the cockpit and your real events are part of the context the council reasons over.
+
+Next: [Building a connector →](/connectors/building/)

@@ -1,0 +1,86 @@
+---
+title: Building a connector
+description: A connector is a folder with a manifest, an optional overview, and runnable skill files. Copy a bundled reference connector and adapt its manifest and skills.
+sidebar:
+  order: 3
+---
+
+import { FileTree, Aside } from '@astrojs/starlight/components';
+
+A connector is just a folder with a manifest and some skill files. The fastest way to build one is to copy a bundled reference connector of the same auth type and adapt it.
+
+## Connector layout
+
+<FileTree>
+
+- apps/community/my-app/
+  - manifest.json  name, auth type, integration metadata
+  - SKILL.md  human-readable overview
+  - skills/
+    - sync.md  a runnable skill
+    - get-balance.md
+
+</FileTree>
+
+When configured on a machine, its runtime state and synced data live separately, under `~/.prevail/connectors/my-app/` (`auth/`, `data/`, `_log/`). Keep credentials out of the definition folder — they belong in the machine-local runtime folder, which is never synced.
+
+## The manifest
+
+`manifest.json` declares what the connector is and how it authenticates:
+
+```json
+{
+  "id": "my-app",
+  "name": "My App",
+  "auth": "oauth",
+  "integration": "rest",
+  "description": "Sync widgets from My App.",
+  "oauth": {
+    "authorizeUrl": "https://myapp.com/oauth/authorize",
+    "tokenUrl": "https://myapp.com/oauth/token",
+    "scopes": ["read:widgets"]
+  }
+}
+```
+
+The `auth` field is one of `api`, `oauth`, `mcp`, `browser`, or `manual` — it tells Prevail which probe and which auth flow to use. See [the auth types](/connectors/overview/#auth-types).
+
+## Skills
+
+Each file in `skills/` is a runnable action, written like a domain [skill](/vault/skills/) — frontmatter plus steps. A connector skill typically reads from the connector's auth, calls the app, and writes results into the connector's `data/` folder.
+
+```markdown
+---
+name: sync
+description: Pull recent widgets into local storage
+---
+
+## Inputs
+- **since** (optional): ISO date; defaults to the last sync cursor.
+
+## Steps
+1. Read the access token from `auth/`.
+2. GET /widgets?since=<since>.
+3. Append results to `data/widgets/YYYY-MM.jsonl`.
+4. Update the cursor in `data/_meta.json`.
+```
+
+Run it with `prevail connectors run my-app sync`. → [Using connectors](/connectors/using/)
+
+## Auth-type checklists
+
+- **`api`** — document which environment variable holds the key; the probe checks it's set.
+- **`oauth`** — fill in `authorizeUrl`, `tokenUrl`, and `scopes`; Prevail's runner handles PKCE, the loopback callback, and refresh.
+- **`mcp`** — point at the MCP server command; the probe checks it starts.
+- **`browser`** — provide the Playwright steps to authenticate; the session is captured to `auth/session.json`.
+- **`manual`** — document where the user drops files; the probe checks the watched folder.
+
+<Aside type="caution" title="Handle secrets correctly">
+Any token your connector writes must land in `~/.prevail/connectors/<id>/auth/` at `chmod 0600`. Prevail refuses to write a secret with looser permissions. Never put credentials in the connector definition folder or anything that gets synced. See [Security](/reference/security/).
+</Aside>
+
+## Contributing it back
+
+The bundled connectors live in `apps/community/`. To share one, follow the same shape and open a PR — see `CONTRIBUTING.md` in the repo for the connector protocol and review checklist.
+
+Next: [The canonical benchmark →](/benchmarks/overview/)

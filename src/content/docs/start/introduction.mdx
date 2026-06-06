@@ -1,0 +1,67 @@
+---
+title: What is Prevail?
+description: Prevail is a single-user terminal cockpit that fans every hard question out to Claude, Codex, Antigravity, and Ollama in parallel, then has a chair model synthesize one verdict — against a vault of plain markdown you fully own.
+sidebar:
+  order: 1
+---
+
+**Prevail** (styled `prevAIl`) is a terminal cockpit for the rest of your life.
+
+Every part of your life — wealth, health, tax, career — is a folder of markdown. You open one, ask a question, and Prevail fans that question out to every AI CLI you already have logged in: [Claude Code](https://claude.com/code), [Codex](https://github.com/openai/codex), [Antigravity](https://github.com/google/antigravity-cli) (Google's `agy`), and your local [Ollama](https://ollama.com). They answer in parallel. A **chair** model reads all the replies and writes one decisive answer — with a dedicated panel surfacing where the panelists *disagreed*, which is the point.
+
+It runs from your terminal, or from your phone over a Telegram bridge. It ships as a single ~95 MB binary. No daemon, no Docker, no API keys to manage.
+
+## The three ideas
+
+Prevail is built on three concepts. The rest of these docs are just detail on top of them.
+
+### 1. The council
+
+Ask one question; get answers from up to four different models at once; let a chair synthesize a single verdict. A single model is one voice with one set of blind spots. A **council** turns disagreement into signal — when Claude says "rent" and Codex says "sell," the *reason they diverge* is usually the actual decision you need to make.
+
+→ [How the council works](/council/overview/)
+
+### 2. The vault
+
+Your data is not in a database or a cloud. It's a folder. Each **domain** — `wealth/`, `health/`, `tax/` — is a subfolder of plain markdown files you can edit in any editor, grep from the shell, and sync with git, iCloud, or Tailscale. Prevail reads it as context and writes back a self-curating decision log. You own every byte.
+
+→ [Vault structure](/vault/structure/)
+
+### 3. The cockpit
+
+The interface that ties them together: a TUI (terminal UI) with a sidebar of your life domains and connected apps on the left, a per-domain workspace on the right, and a single **ConfigBar** along the bottom carrying every per-turn dial — Council, Framework, Lens, Web, Save, Serendipity, Auto.
+
+→ [Cockpit layout](/cockpit/layout/)
+
+## What makes it different
+
+| | |
+|---|---|
+| **Council, not a single voice** | Four models in parallel, one chair synthesizes. Disagreement gets its own panel. |
+| **Domain = folder** | Plain markdown. Edit anywhere. Sync however you like. No database. |
+| **Uses CLIs you already pay for** | Spawns `claude`, `codex`, `agy`, `ollama` — inherits every login, MCP server, and skill. No new API keys. |
+| **Local-private when it matters** | Ollama auto-detected. Run sensitive domains on a council that never leaves your machine. |
+| **Off the keyboard** | `prevail daemon --telegram` exposes the cockpit on your phone, chat-ID allowlist enforced. |
+| **Scheduled briefings** | A verdict on "what's new in wealth this week?" lands on your phone at 7am. |
+| **Self-curating vault** | Every chat writes a one-line summary to `<domain>/_log/`. The vault writes its own decision log. |
+| **Hardened by default** | Env-scrubbed subprocesses, prompt-injection–aware operating manual, OAuth tokens `chmod 0600`. |
+
+## What Prevail is *not*
+
+Prevail is a **single-user terminal cockpit** for personal decisions. You run it on your own machine, with your own AI CLI credentials, against a folder of your own markdown.
+
+It is **not** a SaaS, **not** multi-tenant, **not** an enterprise audit-log system, **not** a replacement for a knowledge base. If you need any of those, Prevail is the wrong tool. Being deliberately small is the point — it keeps your data on your disk and your trust boundary at your own laptop.
+
+## Requirements at a glance
+
+- One or more of: Claude Code, Codex, Antigravity (`agy`), or Ollama — installed and on your `$PATH`.
+- A terminal with UTF-8 and true color.
+- macOS or Linux (Windows via WSL).
+
+Prevail brings no models of its own. It spawns the CLIs you already have, inheriting every login and configuration.
+
+## Free and open source
+
+Prevail is MIT-licensed and developed in the open at [github.com/fru-dev3/prevail](https://github.com/fru-dev3/prevail). The bundled demo vault contains a synthetic persona ("Alex Rivera") with no real personal data — explore it freely.
+
+Ready? [Install Prevail](/start/installation/) or read about [the council](/council/overview/) first.

@@ -1,0 +1,73 @@
+---
+title: Security & threat model
+description: Prevail's trust boundaries and the concrete defenses behind them — env scrubbing, prompt-injection–aware operating manual, reply sanitization, strict journal parsing, and 0600 token storage.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail reads your most personal data and spawns AI subprocesses against it. That means it has a real threat model, and it's hardened by default. This page summarizes it; the canonical, long-form version is in [`docs/threat-model.md`](https://github.com/fru-dev3/prevail/blob/main/docs/threat-model.md) and [`SECURITY.md`](https://github.com/fru-dev3/prevail/blob/main/SECURITY.md) in the repo.
+
+## Trust boundaries
+
+```
+   ┌───────┐ trusted  ┌──────────┐ trusted ┌────────┐
+   │ user  │ ────────▶ │ cockpit  │ ──────▶ │ vault  │
+   └───────┘           │ (prevail)│         │ (md)   │
+                       └────┬─────┘         └───┬────┘
+            scrubbed env    │                   │ read-as-input
+            scrubbed argv   ▼                   │ (UNTRUSTED)
+                      ┌──────────┐              │
+                      │ AI CLI   │ ◀────────────┘
+                      │subprocess│   prompt-injection
+                      └────┬─────┘   channel
+                           │
+            reply (UNTRUSTED) — sanitized
+                           ▼
+                   back into vault + UI
+```
+
+- **Trusted:** you → cockpit; cockpit → vault writes; cockpit → the argv it passes a CLI.
+- **Untrusted:** vault *content* fed to a model (it could contain injected instructions); a model's *reply* (it could try to spoof a verdict or poison the journal).
+
+The defenses below all guard those two untrusted edges.
+
+## Defenses
+
+| Threat | Mitigation |
+|---|---|
+| **Prompt injection via vault content** | The operating manual (`AGENTS-operating.md`) explicitly tells the model to treat vault content as untrusted input. It's prepended to every Claude call via `--append-system-prompt`. |
+| **Secret exfiltration via env vars** | Before spawning any CLI, Prevail scrubs the environment — stripping API-key prefixes (`ANTHROPIC_API_*`, `OPENAI_API_*`, `AWS_*`, `GITHUB_TOKEN`, Telegram vars) and any variable whose name contains `_SECRET`, `_PASSWORD`, or `_PRIVATE_KEY`. |
+| **Verdict spoofing** | Council replies are sanitized — any line starting with `## ` is rewritten to `(panelist) ## ` so a panelist can't forge the chair's `## Verdict` heading. |
+| **Journal hijacking** | The `/distill` parser is strict: it accepts only the expected `DECISION:` / `FACTS:` shape and silently drops everything else, so a model reply can't write arbitrary content into your journal. |
+| **OAuth token theft** | Refresh tokens are stored in `~/.prevail/connectors/<id>/auth/` at `chmod 0600`; Prevail refuses to write a secret with looser permissions. |
+| **Telegram token leakage** | The bot token lives in `~/.prevail/telegram.json` at `chmod 0600`, and the bridge enforces a chat-ID allowlist. |
+| **Vault path traversal** | Path validation and safe child-path resolution block `../../../etc/passwd`-style escapes and refuse to scan system roots like `/`, `/etc`, `/System`. |
+| **Log tampering** | Each log entry has a SHA-256 hash in a `.shasum` sibling, so after-the-fact edits are detectable. |
+
+## The two doors
+
+Two features open Prevail to the outside world. Both are off until you turn them on, and both are guarded:
+
+- **The Telegram bridge** — a chat-ID allowlist (enforced, mandatory) plus a `0600` token. → [Telegram](/advanced/telegram/)
+- **The MCP server** — a bearer token plus a parent-process check. → [MCP](/advanced/mcp/)
+
+<Aside type="caution">
+Read [`docs/threat-model.md`](https://github.com/fru-dev3/prevail/blob/main/docs/threat-model.md) before exposing either the MCP server or the Telegram bridge to anything other than your own laptop.
+</Aside>
+
+## Your part of the bargain
+
+Prevail can't defend against everything. Your responsibilities:
+
+- **Don't sync `~/.prevail/`.** It holds every secret. Sync `<vault>/` only. → [Syncing your vault](/vault/sync/)
+- **Don't paste secrets into chat.** Logs are human-readable markdown in your vault; anything you type into a turn can be written there.
+- **Run the daemon only on machines you control.** The Telegram bridge and MCP server are remote doors into a tool that reads your life.
+- **Use a private repo** if you version your vault with git.
+
+## Reporting a vulnerability
+
+Security issues go through the process in [`SECURITY.md`](https://github.com/fru-dev3/prevail/blob/main/SECURITY.md). Please don't open a public issue for a sensitive report.
+
+Next: [Extending Prevail →](/reference/extending/)

@@ -1,0 +1,73 @@
+---
+title: Connector overview
+description: Connectors bring real-world apps — banks, calendars, email, password managers — into your vault. Each declares an auth type — api, oauth, mcp, browser, or manual.
+sidebar:
+  order: 1
+---
+
+A **connector** integrates a third-party app — your bank, calendar, inbox, password manager — so its data can flow into your vault and inform the council. Connectors show up in the apps sidebar below your domains, each with a live authentication status.
+
+## Auth types
+
+Every connector declares how it authenticates. Prevail handles the mechanics for each:
+
+| Type | How it authenticates | Example apps |
+|---|---|---|
+| `api` | A stored API key or token | Plaid, GitHub, OpenAI |
+| `oauth` | OAuth 2.0 with PKCE, loopback callback, and automatic token refresh | YouTube Analytics, Google Calendar, Gmail |
+| `mcp` | A local MCP server the connector wraps | 1Password, filesystem tools |
+| `browser` | A Playwright session driving the app's real web UI | LinkedIn, Stripe dashboard, AppFolio |
+| `manual` | You drop exported files into a watched folder | CSV exports, screenshots |
+
+The `oauth` runner is the most involved: it handles the PKCE challenge, spins up a loopback listener for the callback, exchanges the code, and refreshes the access token automatically when it expires — storing the refresh token at `chmod 0600`.
+
+## Bundled reference connectors
+
+Prevail ships working examples for each auth type so you have a template to copy:
+
+| Connector | Type | Brings in |
+|---|---|---|
+| Plaid | `api` | Bank, card, and investment transactions |
+| 1Password | `mcp` | Passwords and secure notes |
+| Google Calendar | `oauth` | Events |
+| Gmail | `oauth` | Mail and labels |
+| GitHub | `api` | Repos and issues |
+| LinkedIn | `browser` | Job search, recruiter messages |
+| YouTube Analytics | `oauth` | Video performance |
+| Notion | `api` | Personal wiki |
+| Gusto | `oauth` | Payroll and benefits |
+| QuickBooks | `oauth` | Business accounting |
+| Stripe | `browser` | Payment volume |
+| AppFolio | `browser` | Rental property management |
+| MyChart | `browser` | Medical records |
+| Oura | `oauth` | Sleep and activity |
+
+These live under `apps/community/` and serve as both ready-to-use integrations and worked examples for [building your own](/connectors/building/).
+
+## Where a connector's data lives
+
+Each connector gets a folder under `~/.prevail/connectors/<id>/`:
+
+```
+~/.prevail/connectors/plaid/
+├── manifest.json            metadata + auth type
+├── SKILL.md                 human-readable overview
+├── auth/                    tokens & sessions (chmod 0600)
+│   ├── refresh.token
+│   ├── oauth.json
+│   └── access-tokens/
+├── skills/                  runnable connector skills
+│   └── sync-transactions.md
+├── data/                    synced data
+│   └── transactions/<institution>/YYYY-MM.jsonl
+└── _log/                    sync runs, errors
+    └── YYYY-MM-DD.md
+```
+
+Auth and synced data stay in `~/.prevail/` (machine-local, never synced). The *insights* you derive from them — a monthly spending brief, say — get written into your vault like any other document.
+
+## How connectors relate to the council
+
+A connector pulls structured data into a known location; your domain markdown references it; when you ask a question, that data is part of the context the council reasons over. A `wealth` question can draw on freshly-synced Plaid transactions; a `calendar` briefing can read your real upcoming events.
+
+Next: [Using connectors →](/connectors/using/)

@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Long-cache the immutable hashed assets Astro emits.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Convenience: docs.prevail.sh/install runs the same installer as the main site.
+[[redirects]]
+  from = "/install"
+  to = "https://prevail.sh/install"
+  status = 302
+
+# Send /changelog and /releases to GitHub.
+[[redirects]]
+  from = "/changelog"
+  to = "https://github.com/fru-dev3/prevail/blob/main/CHANGELOG.md"
+  status = 302
+
+[[redirects]]
+  from = "/releases"
+  to = "https://github.com/fru-dev3/prevail/releases"
+  status = 302

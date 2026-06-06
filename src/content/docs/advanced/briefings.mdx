@@ -1,0 +1,77 @@
+---
+title: Scheduled briefings
+description: Schedule recurring council questions per domain — "what's new in wealth this week?" — and have the verdict land in your log or on your phone on a cron schedule.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A **briefing** is a question Prevail asks on a schedule and delivers the answer to. "What's new in wealth this week?" every Monday at 7am; "anything urgent in tax?" on the first of the month. The verdict lands in your log, on your phone, or both.
+
+## Add a briefing
+
+```bash
+prevail briefing add \
+  --cron "0 7 * * 1" \
+  --domain wealth \
+  --prompt "what's new this week?" \
+  --mode council \
+  --deliver telegram
+```
+
+| Flag | Meaning |
+|---|---|
+| `--cron` | Standard cron expression for when to run |
+| `--domain` | Which domain to ask in (sets the context) |
+| `--prompt` | The question |
+| `--mode` | `council` (full panel) or `single` (one CLI) |
+| `--deliver` | `log`, `telegram`, or `both` |
+
+The example above fires every Monday at 7am, convenes the wealth council, and sends the verdict to Telegram.
+
+## Manage briefings
+
+```bash
+prevail briefing list                list all briefings
+prevail briefing run <id>            run one right now (test it)
+prevail briefing remove <id>         delete one
+```
+
+You can also manage them from the cockpit with `/briefing`.
+
+Briefings are stored in `<vault>/.briefings.json`, so they travel with your vault.
+
+## Delivery
+
+- **`log`** — the verdict is written to the domain's `_log/` like any other turn. You'll see it next time you open the domain.
+- **`telegram`** — the verdict is pushed to your phone. Requires the [Telegram bridge](/advanced/telegram/) set up and the daemon running.
+- **`both`** — logged *and* pushed.
+
+## Running them
+
+Briefings fire from the daemon, which checks every minute for anything due:
+
+```bash
+prevail daemon --telegram      # polls Telegram AND ticks briefings
+```
+
+<Aside type="note">
+The daemon is what makes briefings happen. If it isn't running, due briefings simply wait. Run it on your always-on machine alongside the vault. See [Telegram & your phone](/advanced/telegram/).
+</Aside>
+
+## Lower-level scheduling
+
+Briefings are the high-level, domain-aware scheduler. For arbitrary recurring commands, Prevail also has a general `schedule` facility backed by `<vault>/.schedule.json`:
+
+```bash
+prevail schedule list
+prevail schedule add "0 7 * * *" "<command>" --name wealth-7am
+prevail schedule remove <id>
+prevail schedule run <id>
+prevail schedule tick         # fire everything due right now (debugging)
+```
+
+Most people only need `briefing`; reach for `schedule` when you want to run something that isn't a domain question.
+
+Next: [The MCP server →](/advanced/mcp/)

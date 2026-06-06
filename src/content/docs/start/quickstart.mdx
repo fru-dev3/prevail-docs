@@ -1,0 +1,112 @@
+---
+title: Quickstart
+description: From zero to your first council verdict in about a minute — boot the cockpit, ask a question, convene the council, and turn a conversation into a reusable skill.
+sidebar:
+  order: 3
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+This is the 60-second tour. It assumes you've [installed Prevail](/start/installation/).
+
+## Boot the cockpit
+
+```bash
+prevail demo     # safe synthetic vault — explore first
+prevail          # use your own vault
+```
+
+You land in the cockpit:
+
+```
+┌─ prevAIl ─────────────────────────────────────────────────────────────────┐
+│  domains            │  [chat] · state · quick start · prompts · skills    │
+│  ───────────────    │  ───────────────────────────────────────────────    │
+│  ▸ wealth      ●    │   council  ● ON       framework  ◆ BLUF             │
+│    health      ·    │   vault    ▸ open     ◇ configure                   │
+│    tax         ·    │                                                     │
+│    career      ·    │  ─ chat ──────────────────────────────────────────  │
+│    chief       ·    │   you › what's new in tax this quarter?             │
+│    vision      ·    │   ai  › Three deltas worth pulling forward …       │
+│                     │                                                     │
+│  apps  [s]          │   ▸ tools     ◆ Council ON     ◇ configure         │
+│  ───────────────    │                                                     │
+│    1password   ✓    │  claude ✓   codex ✓   gemini ·   ollama ✓          │
+└─────────────────────┴─────────────────────────────────────────────────────┘
+```
+
+- **Left sidebar:** every life domain, plus every connected app below it.
+- **Right workspace:** the active domain, with a consistent tab strip — `chat · state · quick start · prompts · skills`.
+- **Bottom:** the ConfigBar carrying every per-turn dial.
+
+## Get around
+
+<Steps>
+
+1. **Move between domains** with `↑` / `↓`.
+
+2. **Swap focus to the apps list** (and back) with `s`.
+
+3. **Edit the active markdown tab** in your `$EDITOR` with `e`.
+
+4. **Start a slash command** by typing `/`. `/help` lists every one.
+
+5. **Quit** with `q`.
+
+</Steps>
+
+Full list: [Keyboard shortcuts](/cockpit/keyboard/).
+
+## Ask your first questions
+
+Inside the chat pane, type:
+
+```text
+should I sell or rent the condo?
+```
+
+That goes to your single active CLI. To get the whole council instead:
+
+```text
+/council should I sell or rent the condo?
+```
+
+Prevail fans the question to every available engine in parallel, then a chair model synthesizes one verdict — with a panel showing exactly where the panelists disagreed.
+
+```text
+/framework bluf      switch the answer's structure to Bottom Line Up Front
+/web on               allow this turn to reach the internet
+/distill              turn this whole conversation into a reusable skill
+```
+
+<Aside type="tip">
+You don't have to type `/council` every time. Toggle **Council ● ON** in the ConfigBar and *every* question fans out until you toggle it off.
+</Aside>
+
+## Save what you learn
+
+Two things happen automatically as you work:
+
+- Every turn writes a one-line summary to `<domain>/_log/YYYY-MM-DD.md` — your vault keeps its own decision log.
+- `/distill` synthesizes the current conversation into a `SKILL.md` draft under `<domain>/skills/`, so a good workflow becomes a one-click action next time.
+
+→ [Logs & journal](/vault/logs-journal/) · [Skills](/vault/skills/)
+
+## Put it on your phone
+
+```bash
+prevail telegram setup <bot-token>     # token from @BotFather
+prevail telegram add-user <chat-id>    # mandatory allowlist
+prevail daemon --telegram              # poll Telegram + tick briefings
+```
+
+Now `/council`, `/domain wealth`, and `/framework bluf` all work from anywhere.
+
+→ [Telegram & your phone](/advanced/telegram/)
+
+## Where to go next
+
+- **Understand the model:** [Core concepts](/start/concepts/)
+- **Master the interface:** [Slash commands](/cockpit/slash-commands/)
+- **Go deep on the headline feature:** [The council](/council/overview/)
+- **Connect your real apps:** [Connectors](/connectors/overview/)
