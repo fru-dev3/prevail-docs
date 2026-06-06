@@ -23,11 +23,11 @@ export default defineConfig({
     head: [
       {
         tag: "meta",
-        attrs: { property: "og:image", content: "https://docs.prevail.sh/og-image.png" },
+        attrs: { property: "og:image", content: "https://docs.prevail.sh/og-image.png?v=2" },
       },
       {
         tag: "meta",
-        attrs: { name: "twitter:image", content: "https://docs.prevail.sh/og-image.png" },
+        attrs: { name: "twitter:image", content: "https://docs.prevail.sh/og-image.png?v=2" },
       },
       {
         tag: "meta",
