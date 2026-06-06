@@ -11,8 +11,8 @@ export default defineConfig({
     starlight({
     title: "Prevail Docs",
     description:
-      "Prevail is a terminal cockpit that runs Claude, Codex, Antigravity, and Ollama in parallel as a council — and a chair model writes the verdict. Local-first, markdown-native, free and open source.",
-    tagline: "One question. Four engines. One verdict.",
+      "A council of AI for life's hardest questions. Prevail runs Claude, Codex, Antigravity, and Ollama in parallel and a chair model writes the verdict. Local-first, markdown-native, free and open source.",
+    tagline: "A council of AI for life's hardest questions.",
     logo: {
       src: "./src/assets/logo.png",
       alt: "Prevail",

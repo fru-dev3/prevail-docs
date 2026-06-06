@@ -477,3 +477,19 @@ a.card.sl-link-card .title { font-weight: 650; }
 
 /* ── Prev/Next pagination footer: a touch more separation ───────────────── */
 .pagination-links { margin-top: 2.5rem; }
+
+/* ── Brand sign-off (Ask a council. Prevail.) ───────────────────────────── */
+.pv-signoff {
+  margin: 4rem auto 1rem;
+  text-align: center;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  color: var(--sl-color-gray-2);
+  letter-spacing: -0.01em;
+}
+.pv-signoff span {
+  font-style: normal;
+  color: var(--pv-gold);
+  font-weight: 600;
+}
