@@ -1,0 +1,46 @@
+---
+title: Privacy & local-only
+description: Prevail is local-first. Your vault never leaves your machine; the only network calls are the AI CLIs you already installed — and --local-only forbids even those, per invocation.
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail is **local-first**. Your vault is plain files on your disk; the engine reads and writes them in place. Nothing about your life is uploaded to a Prevail service — there is no Prevail service. The only network calls are the AI CLIs you already have installed (Claude, Codex, …), invoked as subprocesses with a [scrubbed environment](/reference/security/).
+
+## The `--local-only` switch
+
+Any single invocation can be forced fully offline:
+
+```bash
+prevail score wealth --audit --local-only --json
+```
+
+`--local-only` **forbids all network/cloud engines and tools** for that invocation and **overrides config**. With it set, an `--audit` either runs against a local engine (Ollama) or produces no narrative at all — it will never reach the network behind your back.
+
+<Aside type="tip">
+Pair it with `--budget <tokens>`: `--local-only` controls *whether* the network is touched, `--budget` caps *how much* any LLM work can spend. Together they mean the engine never reaches out — or runs up a bill — without you asking.
+</Aside>
+
+## The two halves
+
+The data split is what makes local-first concrete (see [Architecture → the two halves](/engine/architecture/#the-two-halves) and [Vault structure](/vault/structure/)):
+
+- **Vault** (`~/life-vault/`) — your markdown/JSON/JSONL. You sync this however you like.
+- **Machine-local** (`~/.prevail/`) — secrets at `0600`, the SQLite session DB, caches. **Never synced.**
+
+Your data is yours, in formats you can read, on hardware you control.
+
+## What leaves your machine — and what doesn't
+
+| Stays local, always | Leaves only when *you* send a prompt |
+|---|---|
+| The vault (all your domains, decisions, journals) | The text of the prompt + context you ask a model to answer |
+| `~/.prevail/` secrets, session DB, caches | — and only to the CLI/provider you already configured |
+| Deterministic Context Scores (no LLM) | The optional `--audit` narrative (skippable, budget-capped, `--local-only`-able) |
+
+## See also
+
+- [Security & threat model](/reference/security/) — env scrubbing, prompt-injection defenses, `0600` token storage.
+- The canonical long-form threat model lives in [`docs/threat-model.md`](https://github.com/fru-dev3/prevail/blob/main/docs/threat-model.md).

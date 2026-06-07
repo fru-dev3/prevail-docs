@@ -1,0 +1,51 @@
+---
+title: Backup & archive
+description: Two safety nets that never delete data — back up the whole vault (or one domain) to an archive, and archive/restore individual domains to declutter the sidebar.
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail's first rule about your data is that it never destroys it. Backup and archive are the two engine features that follow from that — one snapshots files, the other hides domains. Neither deletes anything.
+
+## Backup
+
+```bash
+prevail vault backup --json                 # whole vault
+prevail vault backup --domain wealth --json # one domain
+```
+
+Creates a backup archive of the vault, or of a single domain when `--domain` is given. The engine returns a [`BackupResult`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/BackupResult.json) describing what was written. Because the vault is plain files, the archive is just a packaged copy of those files — readable, restorable, no special tooling required.
+
+<Aside type="tip">
+Backup complements [syncing your vault](/vault/sync/) with git/iCloud/Tailscale — it's a point-in-time snapshot, where sync is continuous. Use both.
+</Aside>
+
+## Archive a domain
+
+```bash
+prevail vault archive explore --json     # → { "ok": true }
+```
+
+Archiving sets `archived: true` + `archived_at` in the domain's [`manifest.json`](/engine/manifest/) and hides it from the active sidebar. The folder and every file in it stay exactly where they are — **archive never deletes data.** It's how you declutter a vault without losing history.
+
+## Restore a domain
+
+```bash
+prevail vault restore explore --json     # → { "ok": true }
+```
+
+Clears `archived` / `archived_at` and the domain reappears in the active sidebar.
+
+## List archived domains
+
+```bash
+prevail vault list-archived --json       # → ["explore", "intel"]
+```
+
+Returns the names of currently-archived domains, so a shell can offer a "show archived" view.
+
+## Why this is safe
+
+Archive is a manifest flag, not a move or delete; backup is an additive snapshot. Combined with the [storage rule](/engine/architecture/#the-storage-rule) — your life is plain markdown in the vault — there is no operation in this surface that can lose your data.

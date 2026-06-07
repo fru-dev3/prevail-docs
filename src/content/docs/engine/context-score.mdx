@@ -1,0 +1,73 @@
+---
+title: Context Score
+description: A single 0–100 score per domain that tells you how ready it is to give a good answer — coverage, density, freshness, structure, activity, and config. Roll them up and you get Life Readiness.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+**Context Score** is one number, 0–100, per domain. It answers a single question: *how ready is this domain to give you a good answer?* Roll the per-domain scores up and you get **Life Readiness** — how ready your whole vault is.
+
+A domain is only as good as the context it carries. An empty `wealth/` gives you generic answers; a dense, fresh, well-structured one gives you answers grounded in your actual life. The Context Score makes that gap visible — and tells you exactly what to fix next.
+
+<Aside type="note">
+The score is computed in the [engine](/engine/architecture/), never in the UI. Every shell reads the same number via [`prevail score <domain> --json`](/engine/json-api/#prevail-score). The wire shape is [`ContextScore`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/ContextScore.json).
+</Aside>
+
+## The breakdown
+
+The score is a weighted blend of six factors. Each is reported in `breakdown` so a shell can show the sub-scores, not just the total.
+
+| Factor | What it measures |
+|---|---|
+| **coverage** | Are the core files present? (`state.md`, `QUICKSTART.md`, `PROMPTS.md`, `config.md`) |
+| **density** | Is there real substance — not stub headings? |
+| **freshness** | How recently was the domain touched? Stale context decays. |
+| **structure** | Are the document folders (`00_current/`, `01_prior/`, `02_briefs/`) and skills organized? |
+| **activity** | Is there recent log / journal / thread activity? |
+| **config_completeness** | Is the [`manifest.json`](/engine/manifest/) filled in — identity, goals, routing? |
+
+Each `breakdown.<factor>` carries its own `score` and `weight`, so the total is reproducible and explainable.
+
+## What's missing
+
+`missing` is an array of [`MissingItem`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/MissingItem.json) — concrete, actionable gaps ("no `state.md`", "manifest has no goals", "nothing in `00_current/`"). This is what powers the "fix this next" nudges in every shell, and it's the path a new user follows after [onboarding](/engine/onboarding/).
+
+## The optional audit
+
+By default the score is **deterministic and free** — pure file inspection, no LLM call. Add `--audit` and the engine also asks a model to write a short narrative `assessment` of readiness, populating `assessment` and `audit_source`. Without `--audit`, both are `null`.
+
+The audit respects the global guardrails: `--budget <tokens>` caps the spend and `--local-only` forces a local engine. See [Privacy & local-only](/engine/privacy/).
+
+```bash
+prevail score wealth --json                 # free, deterministic
+prevail score wealth --audit --json         # + LLM narrative
+prevail score wealth --audit --local-only --json   # narrative, no network
+```
+
+## History
+
+Every computed score is appended to `<domain>/_log/score.jsonl` — one line per point, append-only. This is the JSONL leg of the [storage rule](/engine/architecture/#the-storage-rule): time series → JSONL. `prevail score history <domain> --json` returns the series oldest → newest so a shell can draw a trend line.
+
+```jsonc
+[ { "ts": 1748000000000, "score": 71 },
+  { "ts": 1749220200000, "score": 78 } ]
+```
+
+## Life Readiness
+
+`prevail score --all --json` scores every (non-archived) domain and adds a `lifeReadiness` roll-up — a single 0–100 number across your whole vault, plus the per-domain scores behind it.
+
+```jsonc
+{ "lifeReadiness": 81,
+  "domains": [ ContextScore, ContextScore ] }
+```
+
+## How shells use it
+
+- **Cockpit / desktop** — a badge per domain in the sidebar; overall Life Readiness in the header; the `missing` list as a checklist.
+- **Onboarding** — newly-scaffolded domains start with a low score and a full `missing` list, which becomes the new user's to-do path.
+- **Heartbeat** — a scheduled routine can re-score a domain and alert you if it drops below a threshold (stale context). → [Heartbeat](/engine/heartbeat/)
+
+All of them call the same `--json` command. The number is computed once, in the engine.

@@ -1,0 +1,66 @@
+---
+title: The engine --json API
+description: The frozen contract between the engine and every shell. Each prevail command accepts --json and emits a single JSON value (or NDJSON for streams) on stdout, validated against published JSON Schemas.
+sidebar:
+  order: 8
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The **Engine JSON API** is the contract that makes [one engine, many shells](/engine/architecture/) work. Every `prevail` command accepts `--json` and writes a single JSON value (or NDJSON for streams) to stdout — nothing else. The cockpit, the desktop app, and the channels gateway all drive the engine through it.
+
+<Aside type="note">
+This page is a map. The **canonical, frozen contract** — with every command, its arguments, output shapes, JSON Schemas, and fixtures — is [`docs/ENGINE-JSON-API.md`](https://github.com/fru-dev3/prevail/blob/main/docs/ENGINE-JSON-API.md) in the source repo. Schemas live in [`docs/schemas/`](https://github.com/fru-dev3/prevail/tree/main/docs/schemas) and ready-made payloads in [`docs/fixtures/`](https://github.com/fru-dev3/prevail/tree/main/docs/fixtures), so a UI can be built before the engine command exists.
+</Aside>
+
+## Conventions
+
+- **`--json` everywhere.** With `--json`, a command writes a single JSON value (or NDJSON for streams) to **stdout** and nothing else. Human output appears only when `--json` is absent.
+- **Exit codes.** `0` success, non-zero failure. On failure with `--json`, the command writes an error envelope to stdout:
+  ```json
+  { "ok": false, "error": "human-readable message", "code": "MACHINE_CODE" }
+  ```
+- **Timestamps.** ISO-8601 strings for human-facing fields (`created`, `computed_at`); epoch milliseconds (number) for machine fields (`stateMtime`, `audited_at`, `ts`).
+- **stdin.** Commands that take input (`manifest set`, `onboard recommend`, `onboard apply`, `chat`) read a JSON document from stdin.
+
+## Global flags
+
+| Flag | Meaning |
+|---|---|
+| `--vault <path>` | Vault root to operate on. Defaults to the configured vault. |
+| `--json` | Emit machine-readable JSON (this contract). |
+| `--local-only` | Forbid all network/cloud engines & tools for this invocation. Overrides config. → [Privacy](/engine/privacy/) |
+| `--budget <tokens>` | Hard token budget for any LLM work in this invocation. |
+
+## The command surface
+
+| Command | Output | Covered in |
+|---|---|---|
+| `prevail domains --json` | [`Domain[]`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/Domain.json) | — |
+| `prevail manifest get/set <domain> --json` | [`DomainManifest`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/DomainManifest.json) | [Manifest](/engine/manifest/) |
+| <span id="prevail-score">`prevail score <domain> [--audit] --json`</span> | [`ContextScore`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/ContextScore.json) | [Context Score](/engine/context-score/) |
+| `prevail score --all --json` | `{ lifeReadiness, domains[] }` | [Context Score](/engine/context-score/) |
+| `prevail score history <domain> --json` | `{ ts, score }[]` | [Context Score](/engine/context-score/) |
+| `prevail onboard recommend --json` | [`OnboardingRecommendation`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/OnboardingRecommendation.json) | [Onboarding](/engine/onboarding/) |
+| `prevail onboard apply --json` | `Domain[]` | [Onboarding](/engine/onboarding/) |
+| `prevail vault backup [--domain X] --json` | [`BackupResult`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/BackupResult.json) | [Backup & archive](/engine/backup-archive/) |
+| `prevail vault archive/restore <domain> --json` | `{ ok: true }` | [Backup & archive](/engine/backup-archive/) |
+| `prevail vault list-archived --json` | `string[]` | [Backup & archive](/engine/backup-archive/) |
+| `prevail chat --domain X --json` | NDJSON [`ChatEvent`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/ChatEvent.json) stream | below |
+| `prevail heartbeat install/status --json` | `{ ok, installed, … }` | [Heartbeat](/engine/heartbeat/) |
+
+## Streams: `prevail chat`
+
+Chat is the one streaming command. With `--json` it emits **NDJSON** — one [`ChatEvent`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/ChatEvent.json) per line, flushed as it happens. Typical order: `start` → (`delta`*) → `assistant` → `usage` → `done`; errors emit an `error` event. The finalized turn is appended to `<domain>/_threads/<id>.jsonl` (the JSONL leg of the [storage rule](/engine/architecture/#the-storage-rule)).
+
+```jsonl
+{"type":"start","thread":"2026-06-06-wealth-01","domain":"wealth","engine":"claude:opus-4-8"}
+{"type":"delta","thread":"2026-06-06-wealth-01","text":"Your net worth "}
+{"type":"assistant","thread":"2026-06-06-wealth-01","role":"assistant","text":"Your net worth is up 4.2% …"}
+{"type":"usage","thread":"2026-06-06-wealth-01","usage":{"input_tokens":1820,"output_tokens":240,"cost_usd":0.018}}
+{"type":"done","thread":"2026-06-06-wealth-01"}
+```
+
+## Building against it
+
+Because the contract is frozen and the fixtures are published, a shell can be built and tested before the engine ships the command — render against [`docs/fixtures/`](https://github.com/fru-dev3/prevail/tree/main/docs/fixtures), then swap in the live `--json` call. That's the whole point of freezing the contract.

@@ -1,0 +1,57 @@
+---
+title: Heartbeat
+description: Per-domain scheduled routines installed into the OS scheduler (cron/launchd) — re-score a domain, run a pulse, alert on staleness. Declared in the manifest, installed by the engine.
+sidebar:
+  order: 6
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A **heartbeat** is a per-domain scheduled routine that keeps a domain alive without you opening it — re-score it on a cadence, run a weekly pulse, alert you when context goes stale. Routines are declared in each domain's [`manifest.json`](/engine/manifest/) (`manifest.heartbeat`) and installed by the engine into the OS scheduler (cron on Linux, launchd on macOS).
+
+## Install
+
+```bash
+prevail heartbeat install --json
+```
+
+Installs the OS scheduler hooks for **all enabled** domain heartbeat routines. The engine returns the ids it wired up:
+
+```jsonc
+{ "ok": true, "installed": ["wealth-op-weekly-pulse", "health-op-daily-check"] }
+```
+
+## Status
+
+```bash
+prevail heartbeat status --json
+```
+
+Reports whether the hooks are installed and the state of every routine — schedule, enabled flag, last run, next run:
+
+```jsonc
+{ "ok": true,
+  "installed": true,
+  "routines": [
+    { "domain": "wealth", "id": "wealth-op-weekly-pulse",
+      "schedule": "weekly mon 08:00", "enabled": true,
+      "lastRun": 1749220200000, "nextRun": 1749825000000 } ] }
+```
+
+## How it relates to briefings and schedule
+
+Prevail has three scheduling surfaces, from highest- to lowest-level:
+
+| Surface | Scope | Declared in |
+|---|---|---|
+| **Heartbeat** | Per-domain routines (re-score, pulse, staleness alert) | `manifest.heartbeat` |
+| **[Briefings](/advanced/briefings/)** | Scheduled domain briefings (council or single, delivered to log/Telegram) | `.briefings.json` |
+| **[Schedule](/reference/cli/#schedule-low-level)** | Arbitrary recurring `prevail` commands | `.schedule.json` |
+
+<Aside type="tip">
+A common heartbeat is "re-score this domain weekly and ping me on Telegram if its [Context Score](/engine/context-score/) drops" — it turns a one-time score into ongoing maintenance.
+</Aside>
+
+## Where it runs
+
+Run heartbeats on the always-on machine that holds your vault — the same machine you'd run the [Telegram daemon](/advanced/telegram/) on. Both `lastRun`/`nextRun` are epoch-millisecond machine fields per the [JSON API conventions](/engine/json-api/#conventions).

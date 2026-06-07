@@ -149,6 +149,19 @@ export default defineConfig({
         ],
       },
       {
+        label: "Engine & data",
+        items: [
+          { label: "Architecture", slug: "engine/architecture" },
+          { label: "Context Score", slug: "engine/context-score" },
+          { label: "The domain manifest", slug: "engine/manifest" },
+          { label: "Onboarding", slug: "engine/onboarding" },
+          { label: "Backup & archive", slug: "engine/backup-archive" },
+          { label: "Heartbeat", slug: "engine/heartbeat" },
+          { label: "Privacy & local-only", slug: "engine/privacy" },
+          { label: "The engine --json API", slug: "engine/json-api" },
+        ],
+      },
+      {
         label: "Reference",
         items: [
           { label: "CLI command reference", slug: "reference/cli" },

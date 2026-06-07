@@ -1,0 +1,73 @@
+---
+title: Architecture
+description: One engine, many shells. All logic lives in a headless engine; the cockpit, desktop app, and channels gateway are thin shells over one frozen JSON contract. Plus the storage rule — Markdown, JSON, JSONL, SQLite.
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Prevail has one design law: **one engine, many shells.** All the logic — reading and mutating the vault, computing [Context Score](/engine/context-score/), onboarding, chat, backup/archive, heartbeat — lives in a single headless **engine**. Every surface you touch is a thin **shell** that calls that engine over one frozen JSON contract.
+
+```
+        ┌──────────── shells (thin) ────────────┐
+        │  cockpit (TUI)   desktop   channels    │
+        │       │            │          │        │
+        └───────┴────────────┴──────────┴────────┘
+                         │
+              prevail … --json  (one frozen contract)
+                         ▼
+        ┌──────────────── engine ────────────────┐
+        │  domains · manifest · score · onboard   │
+        │  chat · vault backup/archive · heartbeat│
+        └──────────────────┬──────────────────────┘
+                           ▼
+        ┌──────────────── the vault ──────────────┐
+        │   plain files you own — md / json /      │
+        │   jsonl / sqlite                         │
+        └──────────────────────────────────────────┘
+```
+
+## One engine
+
+There is exactly one place where logic lives. The engine owns the vault — it reads the markdown, merges the manifests, computes the scores, streams the chat turns, archives domains, and installs the OS scheduler hooks. Shells never touch vault files directly.
+
+## Many shells
+
+A shell renders state and forwards intent. It does **not** parse markdown, compute scores, or write to the vault on its own. That's why the same Context Score, the same domain list, and the same chat stream appear identically in the terminal cockpit, the [desktop app](/desktop/overview/), and over Telegram — there is only one implementation behind all of them. New surfaces only have to speak the contract.
+
+## The contract
+
+The boundary between engine and shells is the **Engine JSON API**: every command accepts `--json` and writes a single JSON value (or NDJSON for streams) to stdout. The contract is frozen and documented, with JSON Schemas and ready-made fixtures so a UI can be built before the engine command exists.
+
+→ [The engine `--json` API](/engine/json-api/)
+
+## The storage rule
+
+Prevail stores each kind of data in the format that fits it — and the choice follows one rule:
+
+| Data kind | Format | Where | Why |
+|---|---|---|---|
+| **Human content** (your life, decisions, skills) | **Markdown** | `<domain>/state.md`, `skills/*.md`, `_journal/` | You own it, edit it, grep it, diff it. |
+| **Structured config / records** | **JSON** | `<domain>/manifest.json`, `~/.prevail/config.json` | Machine-merged, schema-validated, deep-mergeable. |
+| **Append-only time series** | **JSONL** | `_log/score.jsonl`, `_threads/<id>.jsonl` | One event per line, append-only, collision-resistant across machines. |
+| **Machine-local cache / index** | **SQLite** | `~/.prevail/sessions/` (FTS5 search) | Fast queries, full-text search — never your source of truth, never synced. |
+
+In one line: **human truth is Markdown, config is JSON, history is JSONL, caches and indexes are SQLite.** The first three live in the vault and sync; SQLite is machine-local and never syncs.
+
+<Aside type="tip">
+This is why your decisions are markdown you can read in any editor, but the chat search index is an opaque SQLite file in `~/.prevail/` you never have to think about.
+</Aside>
+
+## The two halves
+
+The engine keeps a hard line between **your data** and **machine-local state** — the same split described in [Vault structure](/vault/structure/):
+
+- **Vault** — wherever you chose (e.g. `~/life-vault/`). Markdown + JSON + JSONL. **Sync this.**
+- **Machine-local** — `~/.prevail/`. Secrets at `0600`, the SQLite session DB, caches. **Never sync this.**
+
+The storage rule and the two halves reinforce each other: everything portable and yours is plain text in the vault; everything secret or derived stays local.
+
+## Canonical reference
+
+The architecture and storage rule also live alongside the source, in [`ARCHITECTURE.md`](https://github.com/fru-dev3/prevail-docs/blob/main/ARCHITECTURE.md) and the engine contract in [`docs/ENGINE-JSON-API.md`](https://github.com/fru-dev3/prevail/blob/main/docs/ENGINE-JSON-API.md).

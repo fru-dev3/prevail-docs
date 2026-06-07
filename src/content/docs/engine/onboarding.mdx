@@ -1,0 +1,40 @@
+---
+title: Onboarding
+description: How a brand-new vault gets its first domains — answer a few questions, the engine recommends a starter set, you pick, and it scaffolds them. Idempotent and additive.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The first time you run Prevail, the vault is empty. Onboarding turns a few answers into a working set of domains — each with a `state.md`, a default [`manifest.json`](/engine/manifest/), and starter goals and skills.
+
+It's a two-step engine flow: **recommend**, then **apply**.
+
+## 1. Recommend
+
+```bash
+echo '{ "answers": { "focus": "building ventures", "wants_health": false } }' \
+  | prevail onboard recommend --json
+```
+
+The user's free-form answers are read from **stdin**. The engine returns an [`OnboardingRecommendation`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/OnboardingRecommendation.json) — a proposed starter set of domains tailored to those answers (e.g. someone "building ventures" gets `wealth` + `business`; someone who said no to health doesn't get `health`).
+
+## 2. Apply
+
+```bash
+echo '{ "picks": ["wealth", "business"] }' | prevail onboard apply --json
+```
+
+You send the **picks** (names from the recommendation) on stdin. For each pick the engine creates `<vault>/<name>/state.md` plus a default `manifest.json` and starter goals/skills, and returns the [`Domain`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/Domain.json) records that now exist.
+
+<Aside type="tip">
+`onboard apply` is **idempotent** — existing domains are left intact. Run it again to add more domains later; it only scaffolds what's missing. This is the same "conservative and additive" posture as the rest of the engine.
+</Aside>
+
+## After onboarding
+
+Freshly-scaffolded domains start with a low [Context Score](/engine/context-score/) and a full `missing` list — that list is your to-do path. Fill in `state.md`, set goals on the manifest, and watch the score climb. From there:
+
+- Press `n` in the cockpit (or just `mkdir` a folder with a `state.md`) to add domains by hand — onboarding is a convenience, not the only way in.
+- Set up [scheduled briefings](/advanced/briefings/) and [heartbeat routines](/engine/heartbeat/) once a domain has substance.

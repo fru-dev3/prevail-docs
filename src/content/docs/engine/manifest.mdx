@@ -1,0 +1,43 @@
+---
+title: The domain manifest
+description: manifest.json is a domain's machine-readable identity — name, goals, engine routing, heartbeat routines, and archive state. The engine deep-merges it and every shell reads it.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Every domain can carry a `manifest.json` — its machine-readable identity. Where `state.md` is the prose a model reads, `manifest.json` is the structured config a *shell* reads: the domain's name, goals, which engine to route to, its [heartbeat](/engine/heartbeat/) routines, and its archive state.
+
+This is the JSON leg of the [storage rule](/engine/architecture/#the-storage-rule): structured, machine-merged config → JSON. The wire shape is [`DomainManifest`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/DomainManifest.json).
+
+## Reading and writing
+
+```bash
+prevail manifest get wealth --json
+prevail manifest set wealth --json     # partial DomainManifest on stdin
+```
+
+`manifest get` always returns a usable object: if a domain has no `manifest.json` yet, the engine returns a **fully-defaulted** manifest (`schema: 1`, identity derived from the directory, empty goals/routing). Shells never have to handle a missing file.
+
+`manifest set` reads a partial (or full) manifest from **stdin** and **deep-merges** it onto the existing one — it bumps/normalizes `schema` and persists. You only send the keys you want to change.
+
+```bash
+echo '{ "goals": ["hit $1M net worth"] }' | prevail manifest set wealth --json
+```
+
+<Aside type="note">
+Because it's deep-merged, you never have to round-trip the whole document to change one field. Send the delta; the engine merges and writes.
+</Aside>
+
+## What it holds
+
+- **Identity** — display name and metadata for the domain.
+- **Goals** — the outcomes this domain is working toward; they feed prompts and the Context Score's `config_completeness` factor.
+- **Routing** — which engine/model this domain prefers.
+- **Heartbeat** — the scheduled routines for this domain. → [Heartbeat](/engine/heartbeat/)
+- **Archive state** — `archived` / `archived_at`, set by [`vault archive`](/engine/backup-archive/). An archived domain is hidden from the active sidebar but never deleted.
+
+## Why JSON, not markdown
+
+The manifest is *config*, not prose. It's deep-merged by the engine, validated against a schema, and read by every shell to render badges, route calls, and schedule work. Keeping it JSON (and keeping your life as markdown in `state.md`) is exactly the [Markdown / JSON / JSONL / SQLite rule](/engine/architecture/#the-storage-rule).
