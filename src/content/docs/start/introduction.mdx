@@ -1,6 +1,6 @@
 ---
 title: What is Prevail?
-description: Prevail is a single-user terminal cockpit that fans every hard question out to Claude, Codex, Antigravity, and Ollama in parallel, then has a chair model synthesize one verdict — against a vault of plain markdown you fully own.
+description: Prevail is a self-learning AI harness that fans every hard question out to local and cloud models in parallel, then has a chair synthesize one verdict, against a vault of plain markdown you own that gets sharper the more you use it.
 sidebar:
   order: 1
 ---
@@ -10,6 +10,12 @@ sidebar:
 Every part of your life — wealth, health, tax, career — is a folder of markdown. You open one, ask a question, and Prevail fans that question out to every AI CLI you already have logged in: [Claude Code](https://claude.com/code), [Codex](https://github.com/openai/codex), [Antigravity](https://github.com/google/antigravity-cli) (Google's `agy`), and your local [Ollama](https://ollama.com). They answer in parallel. A **chair** model reads all the replies and writes one decisive answer — with a dedicated panel surfacing where the panelists *disagreed*, which is the point.
 
 It runs from your terminal, or from your phone over a Telegram bridge. It ships as a single ~95 MB binary. No daemon, no Docker, no API keys to manage.
+
+**It is self-learning.** Every verdict and decision is written back to your vault as markdown you own. Over time that record becomes context the council reads on the next question, so Prevail evolves to fit your life and gets sharper the more you use it. And because it speaks to both your local model (Ollama, fully private) and the best cloud models, you get the best of both worlds in one harness.
+
+:::caution[Alpha software]
+Prevail is an early, experimental alpha released for demonstration and testing. It is provided "as is", without warranty, and you use it at your own risk. It runs third-party AI tools and, unless Bunker Mode is on, may send data to cloud providers, so always review anything important yourself. [Feedback and bug reports](https://github.com/fru-dev3/prevail-desktop/issues/new) are very welcome and directly shape what comes next.
+:::
 
 ## The three ideas
 
