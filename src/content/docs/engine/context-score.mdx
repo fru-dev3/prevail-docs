@@ -12,7 +12,7 @@ import { Aside } from '@astrojs/starlight/components';
 A domain is only as good as the context it carries. An empty `wealth/` gives you generic answers; a dense, fresh, well-structured one gives you answers grounded in your actual life. The Context Score makes that gap visible — and tells you exactly what to fix next.
 
 <Aside type="note">
-The score is computed in the [engine](/engine/architecture/), never in the UI. Every shell reads the same number via [`prevail score <domain> --json`](/engine/json-api/#prevail-score). The wire shape is [`ContextScore`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/ContextScore.json).
+The score is computed in the [engine](/engine/architecture/), never in the UI. Every shell reads the same number via [`prevail score <domain> --json`](/engine/json-api/#prevail-score). The wire shape is [`ContextScore`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/schemas/ContextScore.json).
 </Aside>
 
 ## The breakdown
@@ -32,7 +32,7 @@ Each `breakdown.<factor>` carries its own `score` and `weight`, so the total is 
 
 ## What's missing
 
-`missing` is an array of [`MissingItem`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/MissingItem.json) — concrete, actionable gaps ("no `state.md`", "manifest has no goals", "nothing in `00_current/`"). This is what powers the "fix this next" nudges in every shell, and it's the path a new user follows after [onboarding](/engine/onboarding/).
+`missing` is an array of [`MissingItem`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/schemas/MissingItem.json) — concrete, actionable gaps ("no `state.md`", "manifest has no goals", "nothing in `00_current/`"). This is what powers the "fix this next" nudges in every shell, and it's the path a new user follows after [onboarding](/engine/onboarding/).
 
 ## The optional audit
 

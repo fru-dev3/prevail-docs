@@ -18,7 +18,7 @@ echo '{ "answers": { "focus": "building ventures", "wants_health": false } }' \
   | prevail onboard recommend --json
 ```
 
-The user's free-form answers are read from **stdin**. The engine returns an [`OnboardingRecommendation`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/OnboardingRecommendation.json) — a proposed starter set of domains tailored to those answers (e.g. someone "building ventures" gets `wealth` + `business`; someone who said no to health doesn't get `health`).
+The user's free-form answers are read from **stdin**. The engine returns an [`OnboardingRecommendation`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/schemas/OnboardingRecommendation.json) — a proposed starter set of domains tailored to those answers (e.g. someone "building ventures" gets `wealth` + `business`; someone who said no to health doesn't get `health`).
 
 ## 2. Apply
 
@@ -26,7 +26,7 @@ The user's free-form answers are read from **stdin**. The engine returns an [`On
 echo '{ "picks": ["wealth", "business"] }' | prevail onboard apply --json
 ```
 
-You send the **picks** (names from the recommendation) on stdin. For each pick the engine creates `<vault>/<name>/state.md` plus a default `manifest.json` and starter goals/skills, and returns the [`Domain`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/Domain.json) records that now exist.
+You send the **picks** (names from the recommendation) on stdin. For each pick the engine creates `<vault>/<name>/state.md` plus a default `manifest.json` and starter goals/skills, and returns the [`Domain`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/schemas/Domain.json) records that now exist.
 
 <Aside type="tip">
 `onboard apply` is **idempotent** — existing domains are left intact. Run it again to add more domains later; it only scaffolds what's missing. This is the same "conservative and additive" posture as the rest of the engine.

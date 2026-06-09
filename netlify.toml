@@ -20,10 +20,10 @@
 # Send /changelog and /releases to GitHub.
 [[redirects]]
   from = "/changelog"
-  to = "https://github.com/fru-dev3/prevail/blob/main/CHANGELOG.md"
+  to = "https://github.com/fru-dev3/prevail-cli/blob/main/CHANGELOG.md"
   status = 302
 
 [[redirects]]
   from = "/releases"
-  to = "https://github.com/fru-dev3/prevail/releases"
+  to = "https://github.com/fru-dev3/prevail-cli/releases"
   status = 302

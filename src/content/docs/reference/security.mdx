@@ -7,7 +7,7 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-Prevail reads your most personal data and spawns AI subprocesses against it. That means it has a real threat model, and it's hardened by default. This page summarizes it; the canonical, long-form version is in [`docs/threat-model.md`](https://github.com/fru-dev3/prevail/blob/main/docs/threat-model.md) and [`SECURITY.md`](https://github.com/fru-dev3/prevail/blob/main/SECURITY.md) in the repo.
+Prevail reads your most personal data and spawns AI subprocesses against it. That means it has a real threat model, and it's hardened by default. This page summarizes it; the canonical, long-form version is in [`docs/threat-model.md`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/threat-model.md) and [`SECURITY.md`](https://github.com/fru-dev3/prevail-cli/blob/main/SECURITY.md) in the repo.
 
 ## Trust boundaries
 
@@ -54,7 +54,7 @@ Two features open Prevail to the outside world. Both are off until you turn them
 - **The MCP server** — a bearer token plus a parent-process check. → [MCP](/advanced/mcp/)
 
 <Aside type="caution">
-Read [`docs/threat-model.md`](https://github.com/fru-dev3/prevail/blob/main/docs/threat-model.md) before exposing either the MCP server or the Telegram bridge to anything other than your own laptop.
+Read [`docs/threat-model.md`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/threat-model.md) before exposing either the MCP server or the Telegram bridge to anything other than your own laptop.
 </Aside>
 
 ## Your part of the bargain
@@ -68,4 +68,4 @@ Prevail can't defend against everything. Your responsibilities:
 
 ## Reporting a vulnerability
 
-Security issues go through the process in [`SECURITY.md`](https://github.com/fru-dev3/prevail/blob/main/SECURITY.md). Please don't open a public issue for a sensitive report.
+Security issues go through the process in [`SECURITY.md`](https://github.com/fru-dev3/prevail-cli/blob/main/SECURITY.md). Please don't open a public issue for a sensitive report.

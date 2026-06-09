@@ -16,7 +16,7 @@ prevail vault backup --json                 # whole vault
 prevail vault backup --domain wealth --json # one domain
 ```
 
-Creates a backup archive of the vault, or of a single domain when `--domain` is given. The engine returns a [`BackupResult`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/BackupResult.json) describing what was written. Because the vault is plain files, the archive is just a packaged copy of those files — readable, restorable, no special tooling required.
+Creates a backup archive of the vault, or of a single domain when `--domain` is given. The engine returns a [`BackupResult`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/schemas/BackupResult.json) describing what was written. Because the vault is plain files, the archive is just a packaged copy of those files — readable, restorable, no special tooling required.
 
 <Aside type="tip">
 Backup complements [syncing your vault](/vault/sync/) with git/iCloud/Tailscale — it's a point-in-time snapshot, where sync is continuous. Use both.

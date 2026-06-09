@@ -9,7 +9,7 @@ import { Aside } from '@astrojs/starlight/components';
 
 Every domain can carry a `manifest.json` — its machine-readable identity. Where `state.md` is the prose a model reads, `manifest.json` is the structured config a *shell* reads: the domain's name, goals, which engine to route to, its [heartbeat](/engine/heartbeat/) routines, and its archive state.
 
-This is the JSON leg of the [storage rule](/engine/architecture/#the-storage-rule): structured, machine-merged config → JSON. The wire shape is [`DomainManifest`](https://github.com/fru-dev3/prevail/blob/main/docs/schemas/DomainManifest.json).
+This is the JSON leg of the [storage rule](/engine/architecture/#the-storage-rule): structured, machine-merged config → JSON. The wire shape is [`DomainManifest`](https://github.com/fru-dev3/prevail-cli/blob/main/docs/schemas/DomainManifest.json).
 
 ## Reading and writing
 

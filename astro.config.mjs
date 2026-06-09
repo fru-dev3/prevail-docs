@@ -64,7 +64,7 @@ export default defineConfig({
       {
         icon: "github",
         label: "GitHub",
-        href: "https://github.com/fru-dev3/prevail",
+        href: "https://github.com/fru-dev3/prevail-cli",
       },
     ],
     editLink: {
